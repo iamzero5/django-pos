@@ -1,0 +1,116 @@
+{% load static %}
+<aside class="main-sidebar sidebar-dark-primary elevation-4">
+    <!-- Brand Logo -->
+    <a href="{% url 'index' %}" class="brand-link">
+      <span class="brand-text font-weight-light">1 Fitness Horizon</span>
+    </a>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <!-- Sidebar user panel (optional) -->
+      <!-- <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+        <div class="image">
+          <img src="{% static 'dist/img/user2-160x160.jpg' %}" class="img-circle elevation-2" alt="User Image">
+        </div>
+        <div class="info">
+          <a href="#" class="d-block">Alexander Pierce</a>
+        </div>
+      </div> -->
+
+      <!-- SidebarSearch Form -->
+      <div class="form-inline mt-2">
+        <div class="input-group" data-widget="sidebar-search">
+          <input class="form-control form-control-sidebar" type="search" placeholder="Search" aria-label="Search">
+          <div class="input-group-append">
+            <button class="btn btn-sidebar">
+              <i class="fas fa-search fa-fw"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sidebar Menu -->
+      <nav class="mt-2">
+        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+          <!-- Add icons to the links using the .nav-icon class
+               with font-awesome or any other icon font library -->
+          
+          {% if user.is_staff %}
+            
+          <li class="nav-item">
+            <a href="#" class="nav-link {{ members_active }}">
+              <i class="nav-icon fas fa-users"></i>
+              <p>
+                Members
+                <i class="right fas fa-angle-left"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview" style="display:none;">
+              <li class="nav-item">
+                <a href="{% url 'members' %}" class="nav-link {{ member_active }}">
+                  <i class="far fa-circle nav-icon"></i><p>Member</p></a>
+              </li>
+              <li class="nav-item">
+                <a href="{% url 'memberships' %}" class="nav-link {{ membership_active }}">
+                  <i class="far fa-circle nav-icon"></i><p>Membership</p></a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link {{ products_active }}">
+              <i class="nav-icon fas fa-tags"></i>
+              <p>
+                Product Management
+                <i class="right fas fa-angle-left"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview" style="display:none;">
+              <li class="nav-item">
+                <a href="#" class="nav-link {{ product_active }}">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Products</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="#" class="nav-link {{ package_active }}">
+                  <i class="far fa-circle nav-icon"></i><p>Packages</p></a>
+              </li>
+              <li class="nav-item">
+                <a href="#" class="nav-link {{ promo_active }}">
+                  <i class="far fa-circle nav-icon"></i><p>Promos</p></a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link {{ payments_active }}">
+              <i class="nav-icon fas fa-cash-register"></i>
+              <p>
+                Payments
+                <i class="right fas fa-angle-left"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview" style="display:none;">
+              <li class="nav-item">
+                <a href="#" class="nav-link {{ cashier_active }}">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Cashier</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="#" class="nav-link {{ ar_active }}">
+                  <i class="far fa-circle nav-icon"></i><p>Accounts Receivable</p></a>
+              </li>
+              <li class="nav-item">
+                <a href="#" class="nav-link {{ pt_active }}">
+                  <i class="far fa-circle nav-icon"></i><p>PT</p></a>
+              </li>
+            </ul>
+          </li>
+          {% endif %}
+          <li class="nav-header">REPORTS</li>
+        </ul>
+      </nav>
+      <!-- /.sidebar-menu -->
+    </div>
+    <!-- /.sidebar -->
+  </aside>
