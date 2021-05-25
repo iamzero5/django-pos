@@ -18,7 +18,7 @@ $(function () {
         var $lbl = $('#modalFormLabel');
         var $btnAction = $('#btnAction');
         $btnAction.data('action',$action);
-        $lbl.text($action+" membership");
+        $lbl.text($action+" product");
         $btnAction.text($action);
         if($action == 'Edit'){
           $id = $($btn).data('id');
@@ -55,7 +55,7 @@ $(function () {
       if($success && $is_closed){
         Swal.fire({
           icon: 'success',
-          text: 'Membership successfully '+$btn_action+'!',
+          text: 'Product successfully '+$btn_action+'!',
         })
         $is_closed = false;
       }
@@ -67,7 +67,7 @@ $(function () {
       $url = $(this).data('url');
       $csrf = $("#datatable").data('csrf');
       Swal.fire({
-        title: 'Do you want to delete this membership?',
+        title: 'Do you want to delete this product?',
         showDenyButton: true,
         showCancelButton: false,
         confirmButtonText: 'Yes',
@@ -147,7 +147,6 @@ $(function () {
             $row = $t.row('#' + response.id);
             $rowindex = $row.index();
             $t.cell({row:$rowindex,column: 0}).data(response.name)
-            $t.cell({row:$rowindex,column: 1}).data(response.price)
               $success = true;
               $is_closed = true;
               $('#modal').modal('hide');

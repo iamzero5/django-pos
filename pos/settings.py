@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'members.apps.MembersConfig'
+    'members.apps.MembersConfig',
+    'products.apps.ProductsConfig'
 ]
 
 MIDDLEWARE = [
@@ -51,6 +52,12 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ]
+}
 
 ROOT_URLCONF = 'pos.urls'
 
@@ -71,7 +78,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'pos.wsgi.application'
-
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
@@ -129,3 +135,6 @@ STATICFILES_DIRS = (
 )
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
+
+U_COMPANY_NAME = ''
+U_BRANCH_MODE = False

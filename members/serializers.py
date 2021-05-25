@@ -18,9 +18,9 @@ class MembershipSerializers(serializers.ModelSerializer):
     def update(self,instance,validated_data):
         user = self.context.get('user')
         instance.name = validated_data.get('name',instance.name)
-        instance.name = validated_data.get('description',instance.description)
-        instance.name = validated_data.get('is_standard',instance.is_standard)
-        instance.name = validated_data.get('price',instance.price)
+        instance.description = validated_data.get('description',instance.description)
+        instance.is_standard = validated_data.get('is_standard',instance.is_standard)
+        instance.price = validated_data.get('price',instance.price)
         instance.updated_by = user
         instance.save()
         return instance
@@ -29,6 +29,8 @@ class MemberSerializers(serializers.ModelSerializer):
     class Meta:
         model = Member
         fields = ['id','first_name','middle_name','last_name','birthdate','street','barangay','city','province','telephone','mobile','email']
+    
+    url = serializers.URLField(source='get_absolute_url', read_only=True)
 
     def create(self,validated_data):
         user = User.objects.create_user(validated_data.get('email'),validated_data.get('email'),'User12354')

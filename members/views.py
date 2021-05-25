@@ -1,28 +1,36 @@
 import datetime
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import redirect, render, get_object_or_404
 from django.http import Http404
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin,PermissionRequiredMixin
 from django.views.generic import ListView
 from django.views.generic.edit import CreateView
 from rest_framework import status,permissions
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .models import Member,Membership
+from .permissions import IsOwnerOrReadOnly
 from .serializers import MemberSerializers, MembershipSerializers
+from django.conf import settings
 
 @login_required
 def index(request):
     return render(request,'members/index.html')
 
+def installer(request):
+    if settings.U_COMPANY_NAME != '':
+        return redirect('index')
+    return render(request,'installers/index.html')
+
 #MembershipModule
-class MembershipListView(LoginRequiredMixin,ListView):
+class MembershipListView(PermissionRequiredMixin,LoginRequiredMixin,ListView):
+    permission_required = ('is_staff','members.view_membership')
     model = Membership
     template_name = "members/membership.html"
 
 class MembershipList(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    #permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request, format=None):
         snippets = Membership.objects.all()
@@ -37,7 +45,7 @@ class MembershipList(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class MembershipDetail(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    #permission_classes = [permissions.IsAuthenticatedOrReadOnly,IsOwnerOrReadOnly]
     
     def get_object(self,pk):
         try:
@@ -91,7 +99,8 @@ class MembershipDetail(APIView):
         )
 
 #MemberModule
-class MemberListView(LoginRequiredMixin,ListView):
+class MemberListView(PermissionRequiredMixin,LoginRequiredMixin,ListView):
+    permission_required = ('is_staff','members.view_member')
     model = Member
     template_name = "members/member.html"
 
@@ -101,7 +110,7 @@ class MemberListView(LoginRequiredMixin,ListView):
         return context
 
 class MemberList(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    #permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request, format=None):
         snippets = Member.objects.all()
@@ -116,7 +125,7 @@ class MemberList(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class MemberDetail(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    #permission_classes = [permissions.IsAuthenticated]
     
     def get_object(self,pk):
         try:

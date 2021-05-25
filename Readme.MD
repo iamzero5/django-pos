@@ -35,5 +35,5 @@ command to run if program contains helper info
 Alexis V. Demonteverde  
 
 ## Version History
-* 0.1
+* 1.0
     * Initial Release
