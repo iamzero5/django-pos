@@ -54,7 +54,13 @@ class Person(CommonFields):
     middle_name = models.CharField(max_length=100,blank=True)
     last_name = models.CharField(max_length=100)
 
+    class Meta:
+        abstract = True
+
 class SalesPerson(Person):
+    active = models.BooleanField(default=True)
+
+class PersonalTrainer(Person):
     active = models.BooleanField(default=True)
 
 class Member(Person):
@@ -76,7 +82,7 @@ class Member(Person):
         ('V','Visa')
         )
     
-    memberkey = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     birthdate = models.DateField()
     gender = models.CharField(max_length=2,choices=GENDERS,default="M")
     street = models.CharField(max_length=150)
@@ -94,12 +100,13 @@ class Member(Person):
     access_key = models.CharField(max_length=100,blank=True,unique=True)
     access_key_released = models.BooleanField(default=False)
     sales_person = models.ForeignKey(SalesPerson,null=True,on_delete=models.SET_NULL)
+    personal_trainer = models.ForeignKey(PersonalTrainer,null=True,on_delete=models.SET_NULL)
 
     bank = models.ForeignKey(Bank,null=True,on_delete=models.SET_NULL)
     card_holder = models.CharField(max_length=100,null=True)
     card_number = models.CharField(max_length=100,null=True)
     card_expiry = models.DateField(null=True)
-    card_type = models.CharField(max_length=2,choices=CARD_TYPES)
+    card_type = models.CharField(max_length=2,choices=CARD_TYPES,blank=True)
 
     #user = models.OneToOneField(User,on_delete=models.CASCADE,related_name="%(class)s_user",null=True)
 

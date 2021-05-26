@@ -18,11 +18,6 @@ from django.conf import settings
 def index(request):
     return render(request,'members/index.html')
 
-def installer(request):
-    if settings.U_COMPANY_NAME != '':
-        return redirect('index')
-    return render(request,'installers/index.html')
-
 #MembershipModule
 class MembershipListView(PermissionRequiredMixin,LoginRequiredMixin,ListView):
     permission_required = ('is_staff','members.view_membership')

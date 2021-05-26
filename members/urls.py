@@ -2,7 +2,6 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('installer/',views.installer,name="installer"),
     path('dashboard/',views.index,name="index"),
     path('memberships/',views.MembershipListView.as_view(),name="memberships"),
     path('membership',views.MembershipList.as_view(),name="membership"),
