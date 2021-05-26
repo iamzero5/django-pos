@@ -18,7 +18,7 @@ from django.urls import path, include
 from django.views.generic import RedirectView
 
 urlpatterns = [
-    path('', RedirectView.as_view(url='installer/', permanent=True)),
+    path('', RedirectView.as_view(url='dashboard/', permanent=True)),
     path('admin/', admin.site.urls),
     path('',include('members.urls')),
     path('',include('products.urls')),
