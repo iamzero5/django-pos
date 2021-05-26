@@ -26,7 +26,7 @@ SECRET_KEY = 'd$in(f*sly*@-4g=&-u4_xsp96op3v$y#(2dichb4a5c$xj)y_'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost','172.16.8.50']
 
 
 # Application definition
@@ -84,7 +84,7 @@ WSGI_APPLICATION = 'pos.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'HOST': 'localhost',
         'USER': 'root',
         'PASSWORD':'root',
