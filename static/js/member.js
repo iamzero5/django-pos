@@ -4,7 +4,7 @@ $(document).ready(function () {
   var $is_closed = false;
 
   $('#divbirthdate').datetimepicker({
-    format:'L'
+    format:'yyyy-MM-DD'
   });
   $('[data-mask]').inputmask()
 
@@ -137,8 +137,8 @@ $(document).ready(function () {
               $editBtn = '<button class="btn btn-warning" data-id="'+ response.id +'" data-url="'+response.url+'" data-toggle="modal" data-target="#modal" data-action="Edit"  title="Edit"><i class="fas fa-user-edit"></i></button>';
               $deleteBtn = '<button type="button" class="btn btn-danger btnDelete" data-id="'+ response.id +'" data-url="'+response.url+'" data-action="Delete"  title="Delete"><i class="fas fa-user-minus"></i></button>';
               $t.row.add([
-                  response.name,
-                  response.membership_status,
+                  response.first_name + " " + response.last_name,
+                  response.membership_status_display,
                   '<div class="btn-group float-right" id="action-'+ response.id +'">'+
                   '</div>'
               ]).draw(false).node().id = response.id;

@@ -1,3 +1,4 @@
+from datetime import datetime
 import uuid
 from django.db import models
 from django.contrib.auth.models import User
@@ -81,8 +82,6 @@ class Member(Person):
         ('M','Mastercard'),
         ('V','Visa')
         )
-    
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     birthdate = models.DateField()
     gender = models.CharField(max_length=2,choices=GENDERS,default="M")
     street = models.CharField(max_length=150)
@@ -95,9 +94,10 @@ class Member(Person):
 
     membership = models.ForeignKey(Membership,on_delete=models.CASCADE,null=True)
     membership_start = models.DateField(null=True)
+    membership_end = models.DateField(null=True)
     membership_term = models.PositiveIntegerField(default=0)
     membership_status = models.CharField(max_length=2,choices=MEMBERSTATUSES,default='N')
-    access_key = models.CharField(max_length=100,blank=True,unique=True)
+    access_key = models.CharField(max_length=100,blank=True,unique=True,default=uuid.uuid4())
     access_key_released = models.BooleanField(default=False)
     sales_person = models.ForeignKey(SalesPerson,null=True,on_delete=models.SET_NULL)
     personal_trainer = models.ForeignKey(PersonalTrainer,null=True,on_delete=models.SET_NULL)

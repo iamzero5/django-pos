@@ -1,4 +1,5 @@
 import datetime
+from django.db.models import Q
 from django.shortcuts import redirect, render, get_object_or_404
 from django.http import Http404
 from django.urls import reverse
@@ -6,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin,PermissionRequiredMixin
 from django.views.generic import ListView
 from django.views.generic.edit import CreateView
-from rest_framework import status,permissions
+from rest_framework import serializers, status,permissions
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .models import Member,Membership
@@ -16,7 +17,11 @@ from django.conf import settings
 
 @login_required
 def index(request):
-    return render(request,'members/index.html')
+    yesterday = datetime.date.today() - datetime.timedelta(days=1)
+    week = datetime.date.today() - datetime.timedelta(days=7)
+    new_members = Member.objects.filter(membership_start__gte=yesterday).count()
+    renewals = Member.objects.filter(membership_end__gte=week).count()
+    return render(request,'members/index.html',{"new_members":new_members,"renewals":renewals})
 
 #MembershipModule
 class MembershipListView(PermissionRequiredMixin,LoginRequiredMixin,ListView):

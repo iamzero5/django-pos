@@ -1,5 +1,5 @@
 from django.db import models
-from members.models import CommonFields,Branch
+from members.models import CommonFields,Branch,Membership
 from django.urls import reverse
 # Create your models here.
 class Product(CommonFields):
@@ -12,6 +12,7 @@ class Product(CommonFields):
     product_type = models.CharField(max_length=2,choices=PRODUCTTYPES,default='I')
     image = models.ImageField(upload_to="products")
     price = models.DecimalField(max_digits=16,decimal_places=4)
+    membership = models.ForeignKey(Membership,on_delete=models.SET_NULL,null=True)
 
     def __str__(self):
         return self.name

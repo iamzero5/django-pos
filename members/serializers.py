@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import Member,Bank,Membership
+from products.models import Product
 from django.contrib.auth.models import User
 
 class MembershipSerializers(serializers.ModelSerializer):
@@ -28,16 +29,12 @@ class MembershipSerializers(serializers.ModelSerializer):
 class MemberSerializers(serializers.ModelSerializer):
     class Meta:
         model = Member
-        fields = ['id','first_name','middle_name','last_name','birthdate','street','barangay','city','province','telephone','mobile','email']
+        fields = ['id','first_name','middle_name','last_name','birthdate','street','barangay','city','province','telephone','mobile','email','url','membership_status_display']
     
+    membership_status_display = serializers.CharField(source='get_membership_status_display',read_only=True)
     url = serializers.URLField(source='get_absolute_url', read_only=True)
 
     def create(self,validated_data):
-        user = User.objects.create_user(validated_data.get('email'),validated_data.get('email'),'User12354')
-        user.first_name = validated_data.get('first_name')
-        user.last_name = validated_data.get('last_name')
-        user.save()
-        validated_data['user'] = user
-        validated_data['created_by'] = self.context['request'].user
-        validated_data['updated_by'] = self.context['request'].user
+        validated_data['created_by'] = self.context['user']
+        validated_data['updated_by'] = self.context['user']
         return Member.objects.create(**validated_data)
