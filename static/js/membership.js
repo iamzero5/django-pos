@@ -8,8 +8,11 @@ $(function () {
         "lengthMenu": [[5, 10, 25, -1], [5, 10, 25, "All"]],
         "ordering": true,
         "info": true,
-        "autoWidth": false,
         "responsive": true,
+        "columnDefs": [
+          { "width": '30%', "targets": 2 }
+      ],
+      "fixedColumns": true
       });
 
       $('#modal').on('show.bs.modal',function(e){
@@ -34,6 +37,9 @@ $(function () {
             success: function(response,textStatus,xhr){
               if(xhr.status == 200){
                 $('#name').val(response.name);
+                $('#description').text(response.description);
+                $('#price').val(response.price);
+                $('#is_standard').val(response.is_standard?'True':'False');
                 $('#form').attr('action',$url);
                 $('#form').attr('method','PUT');
               }else{

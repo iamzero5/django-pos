@@ -26,7 +26,7 @@ SECRET_KEY = 'd$in(f*sly*@-4g=&-u4_xsp96op3v$y#(2dichb4a5c$xj)y_'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost','172.16.8.50']
+ALLOWED_HOSTS = ['localhost','172.16.8.50','210.5.123.29']
 
 
 # Application definition

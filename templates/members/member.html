@@ -27,6 +27,7 @@
   <link rel="stylesheet" href="{% static 'plugins/datatables-buttons/css/buttons.bootstrap4.min.css' %}"><!-- SweetAlert2 -->
   <link rel="stylesheet" href="{% static 'plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css' %}">
   <link rel="stylesheet" href="{% static 'plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css' %}">
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 {% endblock extracss %}
     
 
@@ -47,10 +48,10 @@
                     <td>
                         <div class="btn-group float-right" id="action-{{ member.id }}">
                             <button class="btn btn-warning" data-id="{{ member.id }}" data-url="{% url 'member_api' pk=member.id %}" data-toggle="modal" data-target="#modal" data-action="Edit" title="Edit">
-                                <i class="fas fa-user-edit"></i>
+                                <i class="fas fa-user-edit"></i> Edit
                             </button>
                             <button class="btn btn-danger btnDelete" data-id="{{ member.id }}" data-url="{% url 'member_api' pk=member.id %}" data-action="Delete" title="Delete">
-                                <i class="fas fa-user-minus"></i>
+                                <i class="fas fa-user-minus"></i> Delete
                             </button>
                         </div>
                     </td>
@@ -79,20 +80,20 @@
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
-                            <input type="text" tabindex="1" autofocus="autofucs" name="first_name" class="form-control" id="first_name" placeholder="First name" required>
+                            <input type="text" tabindex="1" autofocus="autofucs" name="first_name" class="form-control form-control-sm" id="first_name" placeholder="First name" required>
                         </div>
                         <div class="form-group">
-                            <input type="text" tabindex="3" name="last_name" class="form-control" id="last_name" placeholder="Last name" required>
+                            <input type="text" tabindex="3" name="last_name" class="form-control form-control-sm" id="last_name" placeholder="Last name" required>
                         </div>
                     </div>
                     <div class="col-md-6">
-                        <input type="text" tabindex="2" name="middle_name" class="form-control" id="middle_name" placeholder="Middle name">
+                        <input type="text" tabindex="2" name="middle_name" class="form-control form-control-sm" id="middle_name" placeholder="Middle name">
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
-                            <select name="gender" tabindex="4" id="gender" class="form-control" required>
+                            <select name="gender" tabindex="4" id="gender" class="form-control form-control-sm" required>
                                 <option value="">Gender</option>
                                 {% for value,gender in gender_choices  %}
                                 <option value="{{ value }}">{{ gender }}</option>
@@ -103,7 +104,7 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <div class="input-group date divbirthdate" id="divbirthdate" data-target-input="nearest">
-                                <input type="text" tabindex="5" name="birthdate" placeholder="Birthday" id="birthdate" class="form-control datetimepicker-input" data-target="#divbirthdate" required />
+                                <input type="text" tabindex="5" name="birthdate" placeholder="Birthday" id="birthdate" class="form-control form-control-sm datetimepicker-input" data-target="#divbirthdate" required />
                                 <div class="input-group-append" data-target="#divbirthdate" data-toggle="datetimepicker">
                                     <div class="input-group-text">
                                         <i class="fa fa-calendar"></i>
@@ -116,44 +117,105 @@
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
-                            <input type="text" tabindex="6" name="street" class="form-control" id="street" placeholder="Street" required>
+                            <input type="text" tabindex="6" name="street" class="form-control form-control-sm" id="street" placeholder="Street" required>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
-                            <input type="text" tabindex="7" name="barangay" class="form-control" id="barangay" placeholder="Barangay" required>
+                            <input type="text" tabindex="7" name="barangay" class="form-control form-control-sm" id="barangay" placeholder="Barangay" required>
                         </div>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
-                            <input type="text" tabindex="8" name="city" class="form-control" id="city" placeholder="City" required>
+                            <input type="text" tabindex="8" name="city" class="form-control form-control-sm" id="city" placeholder="City" required>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
-                            <input type="text" tabindex="9" name="province" class="form-control" id="province" placeholder="Province" required>
+                            <input type="text" tabindex="9" name="province" class="form-control form-control-sm" id="province" placeholder="Province" required>
                         </div>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-4">
                         <div class="form-group">
-                            <input type="text" tabindex="10" name="telephone" class="form-control" id="telephone" placeholder="Telephone" data-inputmask='"mask": "(99) 9999-9999"' data-mask >
+                            <input type="text" tabindex="10" name="telephone" class="form-control form-control-sm" id="telephone" placeholder="Telephone" data-inputmask='"mask": "(99) 9999-9999"' data-mask >
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="form-group">
-                            <input type="text" tabindex="11" name="mobile" class="form-control" id="mobile" placeholder="Mobile Number" data-inputmask='"mask": "\\0\\999-999-9999"' data-mask  required>
+                            <input type="text" tabindex="11" name="mobile" class="form-control form-control-sm" id="mobile" placeholder="Mobile Number" data-inputmask='"mask": "\\0\\999-999-9999"' data-mask  required>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="form-group">
-                            <input type="email" tabindex="12" name="email" class="form-control" id="email" placeholder="Email" required>
+                            <input type="email" tabindex="12" name="email" class="form-control form-control-sm" id="email" placeholder="Email" required>
                         </div>
                     </div>
                 </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <select name="membership" tabindex="13" id="membership" class="form-control form-control-sm">
+                                <option value="">**Select Membership**</option>
+                                {% for membership in memberships  %}
+                                <option value="{{ membership.id }}">{{ membership.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <div class="input-group date divmembershipdate" id="divmembershipdate" data-target-input="nearest">
+                                <input type="text" tabindex="14" name="membreship_start" placeholder="Membership Date" id="membreship_start" class="form-control form-control-sm datetimepicker-input" data-target="#divmembershipdate" />
+                                <div class="input-group-append" data-target="#divmembershipdate" data-toggle="datetimepicker">
+                                    <div class="input-group-text">
+                                        <i class="fa fa-calendar"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <input type="number" tabindex="15" name="membership_term" class="form-control form-control-sm" id="membership_term" placeholder="Membership Term" required>
+                        </div>
+                    </div>
+                </div><!--ROW END-->
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">
+                                    <input type="checkbox" tabindex="16" name="access_key_released" id="access_key_released" title="Released?">
+                                </span>
+                            </div>
+                            <input type="text" tabindex="16" name="access_key" class="form-control form-control-sm" id="access_key" placeholder="Access Key" >
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <select tabindex="17" class="form-control form-control-sm select2div" style="width:100%" name="salesperson">
+                                <option val-e="">**Select Sales Person**</option>
+                                {% for salesperson in salespersons %}
+                                  <option value="{{ salesperson.id }}">{{ salesperson.full_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <select tabindex="18" class="form-control form-control-sm select2div" style="width:100%" name="salesperson">
+                                <option val-e="">**Select Personal Trainer**</option>
+                                {% for personaltrainer in personaltrainers %}
+                                  <option value="{{ personaltrainer.id }}">{{ personaltrainer.full_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div><!--ROW END-->
             </div><!--END MODAL BODY-->
             <div class="modal-footer justify-content-between">
               <button type="submit" id="btnAction" class="btn btn-primary">Save changes</button>
@@ -186,5 +248,6 @@
 <script src="{% static 'plugins/moment/moment.min.js' %}"></script>
 <script src="{% static 'plugins/inputmask/jquery.inputmask.min.js' %}"></script>
 <script src="{% static 'plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js' %}"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script src="{% static 'js/member.js' %}"></script>
 {% endblock extrajs %}

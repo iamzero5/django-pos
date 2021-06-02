@@ -54,6 +54,14 @@
                 <a href="{% url 'memberships' %}" class="nav-link {{ membership_active }}">
                   <i class="far fa-circle nav-icon"></i><p>Membership</p></a>
               </li>
+              <li class="nav-item">
+                <a href="{% url 'salespersons' %}" class="nav-link {{ salesperson_active }}">
+                  <i class="far fa-circle nav-icon"></i><p>Sales Person</p></a>
+              </li>
+              <li class="nav-item">
+                <a href="{% url 'personaltrainers' %}" class="nav-link {{ personaltrainer_active }}">
+                  <i class="far fa-circle nav-icon"></i><p>Personal Trainer</p></a>
+              </li>
             </ul>
           </li>
           <li class="nav-item">
@@ -99,10 +107,6 @@
               <li class="nav-item">
                 <a href="#" class="nav-link {{ ar_active }}">
                   <i class="far fa-circle nav-icon"></i><p>Accounts Receivable</p></a>
-              </li>
-              <li class="nav-item">
-                <a href="#" class="nav-link {{ pt_active }}">
-                  <i class="far fa-circle nav-icon"></i><p>PT</p></a>
               </li>
             </ul>
           </li>

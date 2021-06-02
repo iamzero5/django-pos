@@ -1,3 +1,4 @@
+from datetime import datetime
 import uuid
 from django.db import models
 from django.contrib.auth.models import User
@@ -56,12 +57,30 @@ class Person(CommonFields):
 
     class Meta:
         abstract = True
+    
+    @property
+    def full_name(self):
+        return f'{self.first_name} {self.last_name}'
 
 class SalesPerson(Person):
     active = models.BooleanField(default=True)
 
+    @property
+    def is_active(self):
+        return 'Active' if self.active else'Not Active'
+
+    def get_absolute_url(self):
+        return reverse("salesperson_api", kwargs={"pk": self.pk})
+
 class PersonalTrainer(Person):
     active = models.BooleanField(default=True)
+
+    @property
+    def is_active(self):
+        return 'Active' if self.active else'Not Active'
+
+    def get_absolute_url(self):
+        return reverse("personaltrainer_api", kwargs={"pk": self.pk})
 
 class Member(Person):
 
@@ -81,8 +100,6 @@ class Member(Person):
         ('M','Mastercard'),
         ('V','Visa')
         )
-    
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     birthdate = models.DateField()
     gender = models.CharField(max_length=2,choices=GENDERS,default="M")
     street = models.CharField(max_length=150)
@@ -95,9 +112,10 @@ class Member(Person):
 
     membership = models.ForeignKey(Membership,on_delete=models.CASCADE,null=True)
     membership_start = models.DateField(null=True)
+    membership_end = models.DateField(null=True)
     membership_term = models.PositiveIntegerField(default=0)
     membership_status = models.CharField(max_length=2,choices=MEMBERSTATUSES,default='N')
-    access_key = models.CharField(max_length=100,blank=True,unique=True)
+    access_key = models.CharField(max_length=100,null=True,unique=True)
     access_key_released = models.BooleanField(default=False)
     sales_person = models.ForeignKey(SalesPerson,null=True,on_delete=models.SET_NULL)
     personal_trainer = models.ForeignKey(PersonalTrainer,null=True,on_delete=models.SET_NULL)
@@ -115,10 +133,6 @@ class Member(Person):
 
     def get_absolute_url(self):
         return reverse("member_api", kwargs={"pk": self.pk})
-
-    @property
-    def full_name(self):
-        return f'{self.first_name} {self.last_name}'
 
 
 class MemberMembershipLog(CommonFields):

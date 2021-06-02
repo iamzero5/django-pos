@@ -8,5 +8,11 @@ urlpatterns = [
     path('membership/api/<int:pk>',views.MembershipDetail.as_view(),name="membership_api"),
     path('members/',views.MemberListView.as_view(),name="members"),
     path('member',views.MemberList.as_view(),name="member"),
-    path('member/api/<int:pk>',views.MemberDetail.as_view(),name="member_api")
+    path('member/api/<int:pk>',views.MemberDetail.as_view(),name="member_api"),
+    path('salesperson/',views.SalesPersonListView.as_view(),name="salespersons"),
+    path('salesperson',views.SalesPersonList.as_view(),name="salesperson"),
+    path('salesperson/api/<int:pk>',views.SalesPersonDetail.as_view(),name="salesperson_api"),
+    path('personaltrainer/',views.PersonalTrainerListView.as_view(),name="personaltrainers"),
+    path('personaltrainer',views.PersonalTrainerList.as_view(),name="personaltrainer"),
+    path('personaltrainer/api/<int:pk>',views.PersonalTrainerDetail.as_view(),name="personaltrainer_api"),
 ]

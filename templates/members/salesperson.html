@@ -3,12 +3,12 @@
 {% load static %}
 
 {% block title %}
-    Membership List
+    Sales Person List
 {% endblock title %}
 
 
 {% block headertitle %}
-    Membership
+    Sale Person
 {% endblock headertitle %}
 
 
@@ -35,20 +35,20 @@
         <table id="datatable" class="table table-bordered table-striped" data-csrf="{{ csrf_token }}">
             <thead>
                 <th>Name</th>
-                <th>Price</th>
+                <th>Status</th>
                 <th>Action</th>
             </thead>
             <tbody>
-                {% for membership in object_list %}
-                <tr id="{{ membership.id }}">
-                    <td>{{ membership.name }}</td>
-                    <td>{{ membership.price|default:"Free" }}</td>
+                {% for salesperson in object_list %}
+                <tr id="{{ salesperson.id }}">
+                    <td>{{ salesperson.full_name }}</td>
+                    <td>{{ salesperson.is_active }}</td>
                     <td>
-                        <div class="btn-group" id="action-{{ membership.id }}">
-                            <button class="btn btn-warning" data-id="{{ membership.id }}" data-url="{% url 'membership_api' pk=membership.id %}" data-toggle="modal" data-target="#modal" data-action="Edit" title="Edit">
+                        <div class="btn-group" id="action-{{ salesperson.id }}">
+                            <button class="btn btn-warning" data-id="{{ salesperson.id }}" data-url="{% url 'salesperson_api' pk=salesperson.id %}" data-toggle="modal" data-target="#modal" data-action="Edit" title="Edit">
                                 <i class="fas fa-user-edit"></i> Edit
                             </button>
-                            <button class="btn btn-danger btnDelete" data-id="{{ membership.id }}" data-url="{% url 'membership_api' pk=membership.id %}" data-action="Delete" title="Delete">
+                            <button class="btn btn-danger btnDelete" data-id="{{ salesperson.id }}" data-url="{% url 'salesperson_api' pk=salesperson.id %}" data-action="Delete" title="Delete">
                                 <i class="fas fa-user-minus"></i> Delete
                             </button>
                         </div>
@@ -72,27 +72,27 @@
                 <span aria-hidden="true">&times;</span>
               </button>
             </div>
-            <form method="POST" id="form" data-create="{% url 'membership' %}">
+            <form method="POST" id="form" data-create="{% url 'salesperson' %}">
                 {% csrf_token %}
             <div class="modal-body">
                 <div class="form-group">
-                    <label for="name">Name</label>
-                    <input type="text" name="name" class="form-control" id="name" placeholder="Enter name" required>
+                    <label for="name">First Name</label>
+                    <input type="text" name="first_name" class="form-control" id="first_name" placeholder="Enter First name" required>
                 </div>
                 <div class="form-group">
-                    <label for="name">Description</label>
-                    <textarea name="description" class="form-control" id="description" required></textarea>
+                    <label for="name">Middle Name</label>
+                    <input type="text" name="middle_name" class="form-control" id="middle_name" placeholder="Enter Middle name" required>
                 </div>
                 <div class="form-group">
-                    <label for="name">Standard</label>
-                    <select id="is_standard" name="is_standard" class="custom-select" required>
+                    <label for="name">Last Name</label>
+                    <input type="text" name="last_name" class="form-control" id="last_name" placeholder="Enter Last name" required>
+                </div>
+                <div class="form-group">
+                    <label for="name">Active</label>
+                    <select id="active" name="active" class="custom-select" required>
                         <option value="True">Yes</option>
                         <option value="False">No</option>
                     </select>
-                </div>
-                <div class="form-group">
-                    <label for="name">Price</label>
-                    <input type="number" name="price" class="form-control" id="price" placeholder="Enter Price" required>
                 </div>
             </div>
             <div class="modal-footer justify-content-between">
@@ -124,5 +124,5 @@
 <script src="{% static 'plugins/datatables-buttons/js/buttons.print.min.js' %}"></script>
 <script src="{% static 'plugins/datatables-buttons/js/buttons.colVis.min.js' %}"></script>
 <script src="{% static 'plugins/sweetalert2/sweetalert2.min.js' %}"></script>
-<script src="{% static 'js/membership.js' %}"></script>
+<script src="{% static 'js/salesperson.js' %}"></script>
 {% endblock extrajs %}
