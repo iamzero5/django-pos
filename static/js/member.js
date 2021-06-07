@@ -12,6 +12,11 @@ $(document).ready(function () {
   $('.select2div').select2({
     width:'resolve'
   });
+  $('#access_key_released').on('change',function(e){
+      if($('#access_key').val().length == 0){
+        $(this).prop('checked',false);
+      }
+  })
   $('[data-mask]').inputmask()
 
     $t = $('#datatable').DataTable({
@@ -48,7 +53,25 @@ $(document).ready(function () {
             url: $url,
             success: function(response,textStatus,xhr){
               if(xhr.status == 200){
-                $('#name').val(response.name);
+                $('#first_name').val(response.first_name);
+                $('#middle_name').val(response.middle_name);
+                $('#last_name').val(response.last_name);
+                $('#gender').val(response.gender);
+                $('#birthdate').val(response.birthdate);
+                $('#street').val(response.street);
+                $('#barangay').val(response.barangay);
+                $('#city').val(response.city);
+                $('#province').val(response.province);
+                $('#telephone').val(response.telephone);
+                $('#mobile').val(response.mobile);
+                $('#email').val(response.email);
+                $('#membership').val(response.membership);
+                $('#membership_start').val(response.membership_start);
+                $('#membership_term').val(response.membership_term);
+                $('#sales_person').val(response.sales_person);
+                $('#access_key').val(response.access_key);
+                $('#access_key_released').prop('checked',response.access_key_released)
+                $('#personal_trainer').val(response.personal_trainer);
                 $('#form').attr('action',$url);
                 $('#form').attr('method','PUT');
               }else{
@@ -74,6 +97,7 @@ $(document).ready(function () {
         })
         $is_closed = false;
       }
+      $('#form').trigger('reset');
     });
 
     $('body').on('click','.btnDelete',function(e){
@@ -113,24 +137,82 @@ $(document).ready(function () {
       })
     });
 
-    $('#form').submit(function (e) {
-      e.preventDefault();
-      var serializedData = $('#form').serialize();
-      var $url = $('#form').attr('action');
-      var $method = $('#form').attr('method');
-      var $csrf = $("#datatable").data('csrf');
-      Swal.fire({
-        title: 'Do you want to proceed?',
-        showDenyButton: true,
-        showCancelButton: false,
-        confirmButtonText: 'Yes',
-        denyButtonText: 'No',
-        showLoaderOnConfirm: true,
-        preConfirm: () => {
-          sendRequest(serializedData,$url,$method,$csrf);
+    $('#form').validate({
+      rules: {
+        first_name: {
+          required: true,
+        },
+        last_name: {
+          required: true,
+        },
+        gender: {
+          required: true
+        },
+        birthdate: {
+          required: true
+        },
+        street: {
+          required: true
+        },
+        barangay: {
+          required: true
+        },
+        city: {
+          required: true
+        },
+        province: {
+          required: true
+        },
+        mobile: {
+          required: true
+        },
+      },
+      messages: {
+        first_name: {
+          required: "Please enter first name",
+        },
+        last_name: {
+          required: "Please enter last name",
+        },
+        gender: "Please select gender",
+        birthdate: "Please enter birthdate",
+        street: "Please enter street",
+        barangay: "Please enter barangay",
+        city: "Please enter city",
+        province: "Please enter province",
+        mobile: "Please enter mobile number"
+      },
+      errorElement: 'span',
+      errorPlacement: function (error, element) {
+        error.addClass('invalid-feedback');
+        element.closest('.form-group').append(error);
+      },
+      highlight: function (element, errorClass, validClass) {
+        $(element).addClass('is-invalid');
+      },
+      unhighlight: function (element, errorClass, validClass) {
+        $(element).removeClass('is-invalid');
+      },
+      submitHandler: function (form) {
+        var serializedData = $('#form').serialize();
+        var $url = $('#form').attr('action');
+        var $method = $('#form').attr('method');
+        var $csrf = $("#datatable").data('csrf');
+  
+        Swal.fire({
+          title: 'Do you want to proceed?',
+          showDenyButton: true,
+          showCancelButton: false,
+          confirmButtonText: 'Yes',
+          denyButtonText: 'No',
+          showLoaderOnConfirm: true,
+          preConfirm: () => {
+            sendRequest(serializedData,$url,$method,$csrf);
+          }
+        });
+        return false;
         }
-      })
-  });
+    });
 
   function sendRequest(serializedData,$url,$method,$csrf){
     $.ajax({
@@ -162,6 +244,7 @@ $(document).ready(function () {
             $row = $t.row('#' + response.id);
             $rowindex = $row.index();
             $t.cell({row:$rowindex,column: 0}).data(response.name)
+            $t.cell({row:$rowindex,column: 1}).data(response.membership_status_display)
               $success = true;
               $is_closed = true;
               $('#modal').modal('hide');

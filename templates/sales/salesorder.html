@@ -1,0 +1,204 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}
+    Sales Order
+{% endblock title %}
+
+
+{% block headertitle %}
+    Sales
+{% endblock headertitle %}
+
+
+{% block rightheader %}
+{% endblock rightheader %}
+    
+
+{% block extracss %}
+  <link rel="stylesheet" href="{% static 'plugins/datatables-bs4/css/dataTables.bootstrap4.min.css' %}">
+  <link rel="stylesheet" href="{% static 'plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
+  <link rel="stylesheet" href="{% static 'plugins/datatables-buttons/css/buttons.bootstrap4.min.css' %}"><!-- SweetAlert2 -->
+  <link rel="stylesheet" href="{% static 'plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css' %}">
+  <link rel="stylesheet" href="{% static 'plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css' %}">
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+{% endblock extracss %}
+    
+
+{% block content %}
+<div class="card">
+    <div class="card-body">
+        <form method="POST" id="form" action="{% url 'salesorder' %}">
+            {% csrf_token %}
+        <div class="row">
+            <div class="col-md-8">
+                <div class="form-group">
+                    <select tabindex="1" class="form-control form-control-sm select2div" style="width:100%" name="member">
+                        <option value="">**SOLD-TO**</option>
+                        {% for member in members %}
+                          <option value="{{ member.id }}">{{ member.full_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <div class="input-group date divdate" id="divdate" data-target-input="nearest">
+                        <input disabled type="text" tabindex="2" name="posting_date" placeholder="Document Date" id="posting_date" class="form-control form-control-sm datetimepicker-input" data-target="#divdate" />
+                        <div class="input-group-append" data-target="#divdate" data-toggle="datetimepicker">
+                            <div class="input-group-text">
+                                <i class="fa fa-calendar"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-8">
+                <div class="form-group">
+                    <input type="text" tabindex="3" placeholder="Reference" class="form-control form-control-sm" name="reference_number" id="reference" style="width: 80%;" />
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <select tabindex="4" class="form-control form-control-sm select2div" style="width:100%" name="document_status" disabled>
+                        {% for val,status in document_statuses %}
+                          <option 
+                          {% if val == "O" %}
+                              selected
+                          {% endif %}
+                               value="{{ val }}">{{ status }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="row table-responsive p-0 mb-4" style="height: 200px;">
+            <table id="products" class="table table-hover table-head-fixed text-nowrap">
+                <thead>
+                    <th>Product</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Subtotal</th>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+        <div class="row mb-1">
+            <div class="col-md-12">
+                <div class="btn-group float-right">
+                    <button type="button" id="productAdd" class="btn btn-default btn-xs btn-flat">Add</button>
+                    <button type="button" data-index="" id="productUpdate" class="btn btn-default btn-xs btn-flat" disabled>Update</button>
+                    <button type="button" data-index="" id="productDelete" class="btn btn-default btn-xs btn-flat" disabled>Delete</button>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                <div class="form-group">
+                    <select tabindex="5" data-row="-1" class="form-control form-control-sm select2div excludethis" style="width:100%" name="v_product" id="v_product">
+                        <option value="">**Select Item**</option>
+                        {% for product in products %}
+                          <option value="{{ product.id }}" data-url="{% url 'product_api' product.id %}">{{ product.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                  <input type="text" name="v_price" id="v_price" class="form-control form-control-sm" placeholder="Price" readonly>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                  <input type="number" tabindex="6" name="v_quantity" id="v_quantity" class="form-control form-control-sm" placeholder="Quantity">
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                  <input type="text" name="v_subtotal" id="v_subtotal" class="form-control form-control-sm excludethis" placeholder="Subtotal" readonly>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-9"></div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <input type="number" class="form-control form-control-sm mb-1" name="paid_amount" placeholder="Amount Paid" />
+                    <input type="number" class="form-control form-control-sm" name="total_amount" id="total_amount" placeholder="Total Amount" readonly />
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="btn-group">
+                    <button type="submit" id="btnPost" class="btn btn-primary">Post</button>
+                    <button type="button" class="btn btn-primary dropdown-toggle dropdown-hover dropdown-icon" data-toggle="dropdown" aria-expanded="false">
+                        <span class="sr-only">Toggle Dropdown</span>
+                    </button>
+                    <div class="dropdown-menu" role="menu" style>
+                        <button type="submit" id="btnDraft" class="dropdown-item">Save as Draft</button>
+                        <button type="submit" id="btnCancel" class="dropdown-item" style="display: none;">Cancel</button>
+                    </div>
+                </div>
+                
+            </div>
+        </div><!--ROW END-->
+        </form>
+    </div>
+</div>
+
+    <div class="modal fade" id="modal">
+        <div class="modal-dialog modal-xl">
+          <div class="modal-content">
+            <div class="overlay" style="display: none;">
+                <i class="fas fa-2x fa-sync fa-spin"></i>
+            </div>
+            <div class="modal-header">
+              <h4 class="modal-title" id="modalFormLabel">Default Modal</h4>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            
+            <div class="modal-body">
+                
+            </div><!--END MODAL BODY-->
+            <div class="modal-footer justify-content-between">
+            </div> 
+          </div>
+          <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+      </div>
+      <!-- /.modal -->
+{% endblock content %}
+    
+
+{% block extrajs %}
+    <!-- DataTables  & Plugins -->
+<script src="{% static 'plugins/datatables/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'plugins/datatables-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
+<script src="{% static 'plugins/datatables-responsive/js/dataTables.responsive.min.js' %}"></script>
+<script src="{% static 'plugins/datatables-responsive/js/responsive.bootstrap4.min.js' %}"></script>
+<script src="{% static 'plugins/datatables-buttons/js/dataTables.buttons.min.js' %}"></script>
+<script src="{% static 'plugins/datatables-buttons/js/buttons.bootstrap4.min.js' %}"></script>
+<script src="{% static 'plugins/jszip/jszip.min.js' %}"></script>
+<script src="{% static 'plugins/pdfmake/pdfmake.min.js' %}"></script>
+<script src="{% static 'plugins/pdfmake/vfs_fonts.js' %}"></script>
+<script src="{% static 'plugins/datatables-buttons/js/buttons.html5.min.js' %}"></script>
+<script src="{% static 'plugins/datatables-buttons/js/buttons.print.min.js' %}"></script>
+<script src="{% static 'plugins/datatables-buttons/js/buttons.colVis.min.js' %}"></script>
+<script src="{% static 'plugins/sweetalert2/sweetalert2.min.js' %}"></script>
+<script src="{% static 'plugins/moment/moment.min.js' %}"></script>
+<script src="{% static 'plugins/inputmask/jquery.inputmask.min.js' %}"></script>
+<script src="{% static 'plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js' %}"></script>
+<!-- jquery-validation -->
+<script src="{% static 'plugins/jquery-validation/jquery.validate.min.js' %}"></script>
+<script src="{% static 'plugins/jquery-validation/additional-methods.min.js' %}"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="{% static 'js/salesorder.js' %}"></script>
+{% endblock extrajs %}

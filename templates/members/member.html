@@ -80,10 +80,10 @@
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
-                            <input type="text" tabindex="1" autofocus="autofucs" name="first_name" class="form-control form-control-sm" id="first_name" placeholder="First name" required>
+                            <input type="text" tabindex="1" autofocus="autofucs" name="first_name" class="form-control form-control-sm" id="first_name" placeholder="First name" >
                         </div>
                         <div class="form-group">
-                            <input type="text" tabindex="3" name="last_name" class="form-control form-control-sm" id="last_name" placeholder="Last name" required>
+                            <input type="text" tabindex="3" name="last_name" class="form-control form-control-sm" id="last_name" placeholder="Last name" >
                         </div>
                     </div>
                     <div class="col-md-6">
@@ -93,7 +93,7 @@
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
-                            <select name="gender" tabindex="4" id="gender" class="form-control form-control-sm" required>
+                            <select name="gender" tabindex="4" id="gender" class="form-control form-control-sm" >
                                 <option value="">Gender</option>
                                 {% for value,gender in gender_choices  %}
                                 <option value="{{ value }}">{{ gender }}</option>
@@ -104,7 +104,7 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <div class="input-group date divbirthdate" id="divbirthdate" data-target-input="nearest">
-                                <input type="text" tabindex="5" name="birthdate" placeholder="Birthday" id="birthdate" class="form-control form-control-sm datetimepicker-input" data-target="#divbirthdate" required />
+                                <input type="text" tabindex="5" name="birthdate" placeholder="Birthday" id="birthdate" class="form-control form-control-sm datetimepicker-input" data-target="#divbirthdate"  />
                                 <div class="input-group-append" data-target="#divbirthdate" data-toggle="datetimepicker">
                                     <div class="input-group-text">
                                         <i class="fa fa-calendar"></i>
@@ -117,24 +117,24 @@
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
-                            <input type="text" tabindex="6" name="street" class="form-control form-control-sm" id="street" placeholder="Street" required>
+                            <input type="text" tabindex="6" name="street" class="form-control form-control-sm" id="street" placeholder="Street" >
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
-                            <input type="text" tabindex="7" name="barangay" class="form-control form-control-sm" id="barangay" placeholder="Barangay" required>
+                            <input type="text" tabindex="7" name="barangay" class="form-control form-control-sm" id="barangay" placeholder="Barangay" >
                         </div>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
-                            <input type="text" tabindex="8" name="city" class="form-control form-control-sm" id="city" placeholder="City" required>
+                            <input type="text" tabindex="8" name="city" class="form-control form-control-sm" id="city" placeholder="City" >
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
-                            <input type="text" tabindex="9" name="province" class="form-control form-control-sm" id="province" placeholder="Province" required>
+                            <input type="text" tabindex="9" name="province" class="form-control form-control-sm" id="province" placeholder="Province" >
                         </div>
                     </div>
                 </div>
@@ -146,12 +146,12 @@
                     </div>
                     <div class="col-md-4">
                         <div class="form-group">
-                            <input type="text" tabindex="11" name="mobile" class="form-control form-control-sm" id="mobile" placeholder="Mobile Number" data-inputmask='"mask": "\\0\\999-999-9999"' data-mask  required>
+                            <input type="text" tabindex="11" name="mobile" class="form-control form-control-sm" id="mobile" placeholder="Mobile Number" data-inputmask='"mask": "\\0\\999-999-9999"' data-mask  >
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="form-group">
-                            <input type="email" tabindex="12" name="email" class="form-control form-control-sm" id="email" placeholder="Email" required>
+                            <input type="email" tabindex="12" name="email" class="form-control form-control-sm" id="email" placeholder="Email" >
                         </div>
                     </div>
                 </div>
@@ -169,7 +169,7 @@
                     <div class="col-md-4">
                         <div class="form-group">
                             <div class="input-group date divmembershipdate" id="divmembershipdate" data-target-input="nearest">
-                                <input type="text" tabindex="14" name="membreship_start" placeholder="Membership Date" id="membreship_start" class="form-control form-control-sm datetimepicker-input" data-target="#divmembershipdate" />
+                                <input type="text" tabindex="14" name="membership_start" placeholder="Membership Date" id="membership_start" class="form-control form-control-sm datetimepicker-input" data-target="#divmembershipdate" />
                                 <div class="input-group-append" data-target="#divmembershipdate" data-toggle="datetimepicker">
                                     <div class="input-group-text">
                                         <i class="fa fa-calendar"></i>
@@ -180,7 +180,7 @@
                     </div>
                     <div class="col-md-4">
                         <div class="form-group">
-                            <input type="number" tabindex="15" name="membership_term" class="form-control form-control-sm" id="membership_term" placeholder="Membership Term" required>
+                            <input type="number" tabindex="15" name="membership_term" class="form-control form-control-sm" id="membership_term" placeholder="Membership Term" >
                         </div>
                     </div>
                 </div><!--ROW END-->
@@ -248,6 +248,9 @@
 <script src="{% static 'plugins/moment/moment.min.js' %}"></script>
 <script src="{% static 'plugins/inputmask/jquery.inputmask.min.js' %}"></script>
 <script src="{% static 'plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js' %}"></script>
+<!-- jquery-validation -->
+<script src="{% static 'plugins/jquery-validation/jquery.validate.min.js' %}"></script>
+<script src="{% static 'plugins/jquery-validation/additional-methods.min.js' %}"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script src="{% static 'js/member.js' %}"></script>
 {% endblock extrajs %}

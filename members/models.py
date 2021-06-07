@@ -1,5 +1,4 @@
 from datetime import datetime
-import uuid
 from django.db import models
 from django.contrib.auth.models import User
 from django.urls import reverse
@@ -46,7 +45,6 @@ class Membership(CommonFields):
     def get_absolute_url(self):
         return reverse("membership_api", kwargs={"pk": self.pk})
     
-
 class Bank(CommonFields):
     name = models.CharField(max_length=100)
 

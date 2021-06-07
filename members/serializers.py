@@ -1,7 +1,5 @@
 from rest_framework import serializers
-from .models import Member,Bank,Membership,SalesPerson,PersonalTrainer
-from products.models import Product
-from django.contrib.auth.models import User
+from .models import Member,Membership,SalesPerson,PersonalTrainer
 import datetime
 
 class MembershipSerializers(serializers.ModelSerializer):
@@ -30,7 +28,8 @@ class MembershipSerializers(serializers.ModelSerializer):
 class MemberSerializers(serializers.ModelSerializer):
     class Meta:
         model = Member
-        fields = ['id','first_name','middle_name','last_name','birthdate','street','barangay','city','province','telephone','mobile','email','membership','membership_start','membership_term','sales_person','personal_trainer','url','membership_status_display']
+        fields = ['id','first_name','middle_name','last_name','gender','birthdate','street','barangay','city','province',
+        'telephone','mobile','email','membership','membership_start','membership_term','sales_person','personal_trainer','access_key','access_key_released','url','membership_status_display']
     
     membership_status_display = serializers.CharField(source='get_membership_status_display',read_only=True)
     url = serializers.URLField(source='get_absolute_url', read_only=True)
@@ -38,9 +37,42 @@ class MemberSerializers(serializers.ModelSerializer):
     def create(self,validated_data):
         validated_data['created_by'] = self.context['user']
         validated_data['updated_by'] = self.context['user']
-        v_start = datetime.strptime(validated_data['membership_start'],'%Y-%m-%d')
-        validated_data['membership_end'] = v_start + datetime.timedelta(days=validated_data['membership_term'])
+        validated_data['membership_status'] = 'A' if validated_data['membership'] != None else 'N'
+        validated_data['access_key_released'] = True if validated_data['membership'] != None else False
+        validated_data['membership_end'] = validated_data.get('membership_start') + datetime.timedelta(days=validated_data.get('membership_term'))
+        if validated_data['membership_end'] > datetime.date.today():
+            validated_data['membership_status'] = 'I'
         return Member.objects.create(**validated_data)
+
+    def update(self,instance,validated_data):
+        user = self.context.get('user')
+        instance.first_name = validated_data.get('first_name',instance.first_name)
+        instance.middle_name = validated_data.get('middle_name',instance.middle_name)
+        instance.last_name = validated_data.get('last_name',instance.last_name)
+        instance.gender = validated_data.get('gender',instance.gender)
+        instance.birthdate = validated_data.get('birthdate',instance.birthdate)
+        instance.street = validated_data.get('street',instance.street)
+        instance.barangay = validated_data.get('barangay',instance.barangay)
+        instance.city = validated_data.get('city',instance.city)
+        instance.province = validated_data.get('province',instance.province)
+        instance.telephone = validated_data.get('telephone',instance.telephone)
+        instance.mobile = validated_data.get('mobile',instance.mobile)
+        instance.email = validated_data.get('email',instance.email)
+        instance.membership = validated_data.get('membership',instance.membership)
+        instance.membership_start = validated_data.get('membership_start',instance.membership_start)
+        instance.membership_term = validated_data.get('membership_term',instance.membership_term)
+        instance.sales_person = validated_data.get('sales_person',instance.sales_person)
+        instance.personal_trainer = validated_data.get('personal_trainer',instance.personal_trainer)
+        instance.membership_status = 'A' if instance.membership != None else 'N'
+        instance.access_key = validated_data.get('access_key',instance.access_key)
+        instance.access_key_released = True if validated_data.get('access_key_released') != None else False
+        instance.membership_end = instance.membership_start + datetime.timedelta(days=instance.membership_term)
+        today = datetime.date.today()
+        if instance.membership_end < today:
+            instance.membership_status = 'I'
+        instance.updated_by = user
+        instance.save()
+        return instance
 
 class SalesPersonSerializers(serializers.ModelSerializer):
     class Meta:
