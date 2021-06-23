@@ -5,9 +5,11 @@ from products.serializers import ProductSerializers
 import datetime
 
 class SalesOrderProductSerializers(serializers.ModelSerializer):
+    product_id = serializers.ReadOnlyField(source="product.id")
+    product_name = serializers.ReadOnlyField(source="product.name")
     class Meta:
         model = SalesOrderProduct
-        fields = ['id','sales_order','product','quantity','price','amount']
+        fields = ['id','product_id','product_name','quantity','price','amount']
 
 class SalesOrderSerializers(serializers.ModelSerializer):
     class Meta:
@@ -16,7 +18,7 @@ class SalesOrderSerializers(serializers.ModelSerializer):
         'reference_number','products','total_amount','paid_amount','payment_type','url']
 
     url = serializers.URLField(source='get_absolute_url', read_only=True)
-    products = ProductSerializers(read_only=True,many=True)
+    products = SalesOrderProductSerializers(source="salesorderproduct_set",many=True)
 
     def create(self,validated_data):
         user = self.context.get('user')
@@ -27,6 +29,7 @@ class SalesOrderSerializers(serializers.ModelSerializer):
         quantity_data = self.context.get('quantity')
         so = SalesOrder.objects.create(**validated_data)
         so.total_amount = 0.0
+        so.document_status = "C"
         for i in range(0,len(products_data)):
             prod = Product.objects.get(pk=int(products_data[i]))
             sop = SalesOrderProduct.objects.create(sales_order=so,product=prod,quantity=quantity_data[i],price=price_data[i],amount=float(price_data[i])*float(quantity_data[i]))

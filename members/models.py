@@ -36,6 +36,16 @@ class Branch(CommonFields):
     mobile = models.CharField(max_length=100)
     email = models.EmailField(max_length=150,null=True)
 
+class MembershipTerm(CommonFields):
+    days = models.IntegerField()
+    valid_from = models.DateField(null=True)
+    valid_to = models.DateField(null=True)
+    
+    def __str__(self):
+        post_text = " Days" if self.days > 1 else " Day"
+        return str(self.days) + post_text
+    
+
 class Membership(CommonFields):
     name = models.CharField(max_length=100)
     description = models.TextField()

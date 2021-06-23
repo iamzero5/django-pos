@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 class ProductSerializers(serializers.ModelSerializer):
     class Meta:
         model = Product
-        fields = ['name','product_type','price','url']
+        fields = ['id','name','product_type','price','url']
 
     url = serializers.URLField(source='get_absolute_url', read_only=True)
 
