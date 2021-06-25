@@ -58,6 +58,9 @@ class Membership(CommonFields):
 class Bank(CommonFields):
     name = models.CharField(max_length=100)
 
+    def get_absolute_url(self):
+        return reverse("bank_api", kwargs={"pk": self.pk})
+
 class Person(CommonFields):
     first_name = models.CharField(max_length=100)
     middle_name = models.CharField(max_length=100,blank=True)
@@ -117,6 +120,7 @@ class Member(Person):
     telephone = models.CharField(max_length=100,blank=True)
     mobile = models.CharField(max_length=100)
     email = models.EmailField(max_length=150,null=True)
+    profile_pic = models.ImageField(upload_to="members/",default="members/default.png")
 
     membership = models.ForeignKey(Membership,on_delete=models.CASCADE,null=True)
     membership_start = models.DateField(null=True)
@@ -127,6 +131,7 @@ class Member(Person):
     access_key_released = models.BooleanField(default=False)
     sales_person = models.ForeignKey(SalesPerson,null=True,on_delete=models.SET_NULL)
     personal_trainer = models.ForeignKey(PersonalTrainer,null=True,on_delete=models.SET_NULL)
+    contract = models.FileField(upload_to="contracts/",null=True)
 
     bank = models.ForeignKey(Bank,null=True,on_delete=models.SET_NULL)
     card_holder = models.CharField(max_length=100,null=True)

@@ -1,4 +1,8 @@
+document.addEventListener('DOMContentLoaded', function () {
+  window.stepper = new Stepper(document.querySelector('.bs-stepper'))
+})
 $(document).ready(function () {
+  bsCustomFileInput.init();
   var $success = false;
   var $btn_action = "";
   var $is_closed = false;
@@ -9,6 +13,9 @@ $(document).ready(function () {
   $('#divmembershipdate').datetimepicker({
     format:'yyyy-MM-DD'
   });
+  $('#divcardexpiry').datetimepicker({
+    format:'yyyy-MM-DD'
+  });
   $('.select2div').select2({
     width:'resolve'
   });
@@ -17,6 +24,19 @@ $(document).ready(function () {
         $(this).prop('checked',false);
       }
   })
+  $('.u-stepper-btn').on('click',function(e){
+    var form = "form1";
+    if($(this).prop('id')=="1"){
+      form = $("#form1");
+    }else if($(this).prop('id')=="2"){
+      form = $("#form2");
+    }
+    if($(this).data('action')=="next" && form.valid()){
+      stepper.next()
+    }else if($(this).data('action')=="prev"){
+      stepper.previous()
+    }
+  });
   $('[data-mask]').inputmask()
 
     $t = $('#datatable').DataTable({
@@ -97,7 +117,9 @@ $(document).ready(function () {
         })
         $is_closed = false;
       }
-      $('#form').trigger('reset');
+      $('#form1').trigger('reset');
+      $('#form2').trigger('reset');
+      $('#form3').trigger('reset');
     });
 
     $('body').on('click','.btnDelete',function(e){
@@ -137,7 +159,7 @@ $(document).ready(function () {
       })
     });
 
-    $('#form').validate({
+    $('#form1').validate({
       rules: {
         first_name: {
           required: true,
@@ -192,12 +214,93 @@ $(document).ready(function () {
       },
       unhighlight: function (element, errorClass, validClass) {
         $(element).removeClass('is-invalid');
+      }
+    });
+    $('#form2').validate({
+      rules: {
+        membership: {
+          required: true,
+        },
+        membership_start: {
+          required: true,
+        },
+        membership_term: {
+          required: true
+        },
+        contract:{
+          required: true,
+          extension:'pdf'
+        }
+      },
+      messages: {
+        membership: {
+          required: "Please select membership",
+        },
+        membership_start: {
+          required: "Please enter membership date.",
+        },
+        membership_term: "Please select membership term.",
+        contract: "Soft copy of contract is required!",
+      },
+      errorElement: 'span',
+      errorPlacement: function (error, element) {
+        error.addClass('invalid-feedback');
+        element.closest('.form-group').append(error);
+      },
+      highlight: function (element, errorClass, validClass) {
+        $(element).addClass('is-invalid');
+      },
+      unhighlight: function (element, errorClass, validClass) {
+        $(element).removeClass('is-invalid');
+      }
+    });
+    $('#form3').validate({
+      rules: {
+        bank: {
+          required: true,
+        },
+        card_type: {
+          required: true,
+        },
+        card_holder: {
+          required: true
+        },
+        card_number: {
+          required: true
+        },
+        card_expiry: {
+          required: true
+        },
+      },
+      messages: {
+        bank: {
+          required: "Please select bank.",
+        },
+        card_type: {
+          required: "Please select card type.",
+        },
+        card_holder: "Please enter card holder's name.",
+        card_number: "Please enter card number",
+        card_expiry: "Please enter card expiry.",
+      },
+      errorElement: 'span',
+      errorPlacement: function (error, element) {
+        error.addClass('invalid-feedback');
+        element.closest('.form-group').append(error);
+      },
+      highlight: function (element, errorClass, validClass) {
+        $(element).addClass('is-invalid');
+      },
+      unhighlight: function (element, errorClass, validClass) {
+        $(element).removeClass('is-invalid');
       },
       submitHandler: function (form) {
-        var serializedData = $('#form').serialize();
-        var $url = $('#form').attr('action');
-        var $method = $('#form').attr('method');
-        var $csrf = $("#datatable").data('csrf');
+        var serializedData1 = $('#form1').serialize();
+        var serializedData2 = $('#form2').serialize();
+        var serializedData3 = $('#form3').serialize();
+        var $url = $('#form1').attr('action');
+        var $method = $('#form1').attr('method');
+        var $csrf = $('input[name="csrfmiddlewaretoken"]:first').val();
   
         Swal.fire({
           title: 'Do you want to proceed?',
@@ -207,8 +310,9 @@ $(document).ready(function () {
           denyButtonText: 'No',
           showLoaderOnConfirm: true,
           preConfirm: () => {
-            sendRequest(serializedData,$url,$method,$csrf);
-          }
+            sendRequest(serializedData1+"&"+serializedData2+"&"+serializedData3,$url,$method,$csrf);
+          },
+          allowOutsideClick: () => !Swal.isLoading()
         });
         return false;
         }
@@ -224,30 +328,43 @@ $(document).ready(function () {
       data: serializedData,
       success: function(response,textStatus,xhr){
           if(xhr.status == 201 && $method == "POST"){
-              $('#form').trigger('reset');
-              $editBtn = '<button class="btn btn-warning" data-id="'+ response.id +'" data-url="'+response.url+'" data-toggle="modal" data-target="#modal" data-action="Edit"  title="Edit"><i class="fas fa-user-edit"></i></button>';
-              $deleteBtn = '<button type="button" class="btn btn-danger btnDelete" data-id="'+ response.id +'" data-url="'+response.url+'" data-action="Delete"  title="Delete"><i class="fas fa-user-minus"></i></button>';
-              $t.row.add([
-                  response.first_name + " " + response.last_name,
-                  response.membership_status_display,
-                  '<div class="btn-group float-right" id="action-'+ response.id +'">'+
-                  '</div>'
-              ]).draw(false).node().id = response.id;
-              $('#action-'+response.id).append($($editBtn));
-              $('#action-'+response.id).append($($deleteBtn))
-              $success = true;
-              $is_closed = true;
-              $('#modal').modal('hide');
+              var profile = $('#profile_pic')[0].files;
+              var contract = $('#contract')[0].files;
+              var fd = new FormData();
+              if(profile.length>0){
+                fd.append('profile_pic',profile[0]);
+              }
+              if(contract.length>0){
+                fd.append('contract',contract[0]);
+              }
+              fd.append('csrfmiddlewaretoken',$csrf);
+              $.ajax({
+                url:'upload/photo/' + response.id,
+                type: 'post',
+              data: fd,
+              contentType: false,
+              processData: false,
+              success: function(response){
+                $editBtn = '<button class="btn btn-warning" data-id="'+ response.id +'" data-url="'+response.url+'" data-toggle="modal" data-target="#modal" data-action="Edit"  title="Edit"><i class="fas fa-user-edit"></i></button>';
+                $deleteBtn = '<button type="button" class="btn btn-danger btnDelete" data-id="'+ response.id +'" data-url="'+response.url+'" data-action="Delete"  title="Delete"><i class="fas fa-user-minus"></i></button>';
+                $t.row.add([
+                    response.first_name + " " + response.last_name,
+                    response.membership_status_display,
+                    '<div class="btn-group float-right" id="action-'+ response.id +'">'+
+                    '</div>'
+                ]).draw(false).node().id = response.id;
+                $('#action-'+response.id).append($($editBtn));
+                $('#action-'+response.id).append($($deleteBtn));
+                $success = true;
+                $is_closed = true;
+                $('#modal').modal('hide');
+              },
+
+              });
           }else if($method == "POST"){
             $success = false;
           }else if(xhr.status == 200 && $method == "PUT"){
-            $row = $t.row('#' + response.id);
-            $rowindex = $row.index();
-            $t.cell({row:$rowindex,column: 0}).data(response.name)
-            $t.cell({row:$rowindex,column: 1}).data(response.membership_status_display)
-              $success = true;
-              $is_closed = true;
-              $('#modal').modal('hide');
+            $success = true;
           }
       },
       error: function(response){

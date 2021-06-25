@@ -1,12 +1,15 @@
 import datetime
 from django.http import Http404
 from django.contrib.auth.mixins import LoginRequiredMixin,PermissionRequiredMixin
+from django.shortcuts import get_object_or_404
 from django.views.generic import ListView
 from rest_framework import status
 from rest_framework.views import APIView
+from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from members.models import Member,Membership, SalesPerson,PersonalTrainer
+from members.models import Member,Membership, SalesPerson,PersonalTrainer, Bank
 from members.serializers import MemberSerializers
+from django.contrib.auth.decorators import login_required
 
 #MemberModule
 class MemberListView(PermissionRequiredMixin,LoginRequiredMixin,ListView):
@@ -17,10 +20,23 @@ class MemberListView(PermissionRequiredMixin,LoginRequiredMixin,ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['gender_choices'] = Member.GENDERS
+        context['card_types'] = Member.CARD_TYPES
         context['memberships'] = Membership.objects.all()
         context['salespersons'] = SalesPerson.objects.filter(active=True)
         context['personaltrainers'] = PersonalTrainer.objects.filter(active=True)
+        context['banks'] = Bank.objects.all()
         return context
+
+@login_required
+@api_view(['POST'])
+def member_photo_upload(request, member_id):
+    if request.method == "POST":
+        member = get_object_or_404(Member,id=member_id)
+        member.profile_pic = request.FILES['profile_pic']
+        member.contract = request.FILES['contract']
+        member.save()
+        serializer = MemberSerializers(member)
+        return Response(serializer.data,status=status.HTTP_200_OK)
 
 class MemberList(APIView):
     #permission_classes = [permissions.IsAuthenticated]

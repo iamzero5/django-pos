@@ -15,7 +15,7 @@
 {% block rightheader %}
 <div class="btn-group float-right">
     <button class="btn btn-primary btn-block" data-toggle="modal" data-target="#modal" data-action="Add" title="New">
-        <i class="fas fa-user-plus"></i> New
+        <i class="fas fa-id-card"></i> New
     </button>
 </div>
 {% endblock rightheader %}
@@ -28,6 +28,7 @@
   <link rel="stylesheet" href="{% static 'plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css' %}">
   <link rel="stylesheet" href="{% static 'plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css' %}">
   <link href="{% static 'plugins/select2/css/select2.css' %}" rel="stylesheet" />
+  <link rel="stylesheet" href="{% static 'plugins/bs-stepper/css/bs-stepper.min.css' %}">
 {% endblock extracss %}
     
 
@@ -43,7 +44,7 @@
             <tbody>
                 {% for member in object_list %}
                 <tr id="{{ member.id }}">
-                    <td>{{ member.full_name }}</td>
+                    <td><img src='/media/{{ member.profile_pic }}' class="img-circle img-bordered-sm" width="48px" height="48px" alt="Profile Picture" /> {{ member.full_name }}</td>
                     <td>{{ member.get_membership_status_display }}</td>
                     <td>
                         <div class="btn-group float-right" id="action-{{ member.id }}">
@@ -62,7 +63,7 @@
         </div>
     </div>
 
-    <div class="modal fade" id="modal">
+    <div class="modal fade" id="modal" data-backdrop="static" data-keyboard="false">
         <div class="modal-dialog modal-xl">
           <div class="modal-content">
             <div class="overlay" style="display: none;">
@@ -74,153 +75,256 @@
                 <span aria-hidden="true">&times;</span>
               </button>
             </div>
-            <form method="POST" id="form" data-create="{% url 'member' %}">
-                {% csrf_token %}
             <div class="modal-body">
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <input type="text" tabindex="1" autofocus="autofucs" name="first_name" class="form-control form-control-sm" id="first_name" placeholder="First name" >
+                <form method="POST" id="form1" action="{% url 'member' %}">
+                    {% csrf_token %}
+                    <div class="bs-stepper linear">
+                        <div class="bs-stepper-header" role="tablist">
+                            <div class="step active" data-target="#personalinfo">
+                                <button type="button" class="step-trigger" role="tab" id="personalinfo_trigger">
+                                    <span class="bs-stepper-circle">1</span>
+                                    <span class="bs-stepper-label">Personal Information</span>
+                                </button>
+                            </div>
+                            <div class="line"></div>
+                            <div class="step" data-target="#membershipinfo">
+                                <button type="button" class="step-trigger" role="tab" id="membershipinfo_trigger" disabled>
+                                    <span class="bs-stepper-circle">2</span>
+                                    <span class="bs-stepper-label">Membership</span>
+                                </button>
+                            </div><div class="line"></div>
+                            <div class="step" data-target="#bankinfo">
+                                <button type="button" class="step-trigger" role="tab" id="bankinfo_trigger" disabled>
+                                    <span class="bs-stepper-circle">3</span>
+                                    <span class="bs-stepper-label">Bank Details</span>
+                                </button>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <input type="text" tabindex="3" name="last_name" class="form-control form-control-sm" id="last_name" placeholder="Last name" >
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <input type="text" tabindex="2" name="middle_name" class="form-control form-control-sm" id="middle_name" placeholder="Middle name">
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <select name="gender" tabindex="4" id="gender" class="form-control form-control-sm" >
-                                <option value="">Gender</option>
-                                {% for value,gender in gender_choices  %}
-                                <option value="{{ value }}">{{ gender }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <div class="input-group date divbirthdate" id="divbirthdate" data-target-input="nearest">
-                                <input type="text" tabindex="5" name="birthdate" placeholder="Birthday" id="birthdate" class="form-control form-control-sm datetimepicker-input" data-target="#divbirthdate"  />
-                                <div class="input-group-append" data-target="#divbirthdate" data-toggle="datetimepicker">
-                                    <div class="input-group-text">
-                                        <i class="fa fa-calendar"></i>
+                        <div class="bs-stepper-content">
+                            <div id="personalinfo" class="content active dstepper-block" role="tabpanel">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <input type="text" tabindex="1" autofocus="autofocus" name="first_name" class="form-control form-control-sm" id="first_name" placeholder="First name" >
+                                        </div>
+                                        <div class="form-group">
+                                            <input type="text" tabindex="3" name="last_name" class="form-control form-control-sm" id="last_name" placeholder="Last name" >
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <input type="text" tabindex="2" name="middle_name" class="form-control form-control-sm" id="middle_name" placeholder="Middle name">
+                                        </div>
+                                        <div class="input-group">
+                                            <div class="custom-file">
+                                                <input type="file" name="profile_pic" accept="image/*" class='custom-file-input' id="profile_pic" placeholder="Member Photo" />
+                                                <label class="custom-file-label">Choose Photo</label>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <input type="text" tabindex="6" name="street" class="form-control form-control-sm" id="street" placeholder="Street" >
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <input type="text" tabindex="7" name="barangay" class="form-control form-control-sm" id="barangay" placeholder="Barangay" >
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <input type="text" tabindex="8" name="city" class="form-control form-control-sm" id="city" placeholder="City" >
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <input type="text" tabindex="9" name="province" class="form-control form-control-sm" id="province" placeholder="Province" >
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <input type="text" tabindex="10" name="telephone" class="form-control form-control-sm" id="telephone" placeholder="Telephone" data-inputmask='"mask": "(99) 9999-9999"' data-mask >
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <input type="text" tabindex="11" name="mobile" class="form-control form-control-sm" id="mobile" placeholder="Mobile Number" data-inputmask='"mask": "\\0\\999-999-9999"' data-mask  >
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <input type="email" tabindex="12" name="email" class="form-control form-control-sm" id="email" placeholder="Email" >
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <select name="membership" tabindex="13" id="membership" class="form-control form-control-sm">
-                                <option value="">**Select Membership**</option>
-                                {% for membership in memberships  %}
-                                <option value="{{ membership.id }}">{{ membership.name }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <div class="input-group date divmembershipdate" id="divmembershipdate" data-target-input="nearest">
-                                <input type="text" tabindex="14" name="membership_start" placeholder="Membership Date" id="membership_start" class="form-control form-control-sm datetimepicker-input" data-target="#divmembershipdate" />
-                                <div class="input-group-append" data-target="#divmembershipdate" data-toggle="datetimepicker">
-                                    <div class="input-group-text">
-                                        <i class="fa fa-calendar"></i>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <select name="gender" tabindex="4" id="gender" class="form-control form-control-sm" >
+                                                <option value="">Gender</option>
+                                                {% for value,gender in gender_choices  %}
+                                                <option value="{{ value }}">{{ gender }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <div class="input-group date divbirthdate" id="divbirthdate" data-target-input="nearest">
+                                                <input type="text" tabindex="5" name="birthdate" placeholder="Birthday" id="birthdate" class="form-control form-control-sm datetimepicker-input" data-target="#divbirthdate"  />
+                                                <div class="input-group-append" data-target="#divbirthdate" data-toggle="datetimepicker">
+                                                    <div class="input-group-text">
+                                                        <i class="fa fa-calendar"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <input type="text" tabindex="6" name="street" class="form-control form-control-sm" id="street" placeholder="Street" >
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <input type="text" tabindex="7" name="barangay" class="form-control form-control-sm" id="barangay" placeholder="Barangay" >
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <input type="text" tabindex="8" name="city" class="form-control form-control-sm" id="city" placeholder="City" >
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <input type="text" tabindex="9" name="province" class="form-control form-control-sm" id="province" placeholder="Province" >
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <input type="text" tabindex="10" name="telephone" class="form-control form-control-sm" id="telephone" placeholder="Telephone" data-inputmask='"mask": "(99) 9999-9999"' data-mask >
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <input type="text" tabindex="11" name="mobile" class="form-control form-control-sm" id="mobile" placeholder="Mobile Number" data-inputmask='"mask": "\\0\\999-999-9999"' data-mask  >
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <input type="email" tabindex="12" name="email" class="form-control form-control-sm" id="email" placeholder="Email" >
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row float-right">
+                                    <button type="button" id="1" data-action="next" class="btn btn-primary u-stepper-btn">Next</button>
+                                </div> 
+                                </form>
+                            </div><!--PERSONAL INFO-->
+                            <div class="content" id="membershipinfo">
+                                <form method="POST" id="form2">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <select name="membership" tabindex="13" id="membership" class="form-control form-control-sm">
+                                                <option value="">**Select Membership**</option>
+                                                {% for membership in memberships  %}
+                                                <option value="{{ membership.id }}">{{ membership.name }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <div class="input-group date divmembershipdate" id="divmembershipdate" data-target-input="nearest">
+                                                <input type="text" tabindex="14" name="membership_start" placeholder="Membership Date" id="membership_start" class="form-control form-control-sm datetimepicker-input" data-target="#divmembershipdate" />
+                                                <div class="input-group-append" data-target="#divmembershipdate" data-toggle="datetimepicker">
+                                                    <div class="input-group-text">
+                                                        <i class="fa fa-calendar"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <input type="number" tabindex="15" name="membership_term" class="form-control form-control-sm" id="membership_term" placeholder="Membership Term" >
+                                        </div>
+                                    </div>
+                                </div><!--ROW END-->
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text">
+                                                    <input type="checkbox" tabindex="16" name="access_key_released" id="access_key_released" title="Released?">
+                                                </span>
+                                            </div>
+                                            <input type="text" tabindex="16" name="access_key" class="form-control form-control-sm" id="access_key" placeholder="Access Key" >
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <select tabindex="17" class="form-control form-control-sm select2div" style="width:100%" name="salesperson">
+                                                <option val-e="">**Select Sales Person**</option>
+                                                {% for salesperson in salespersons %}
+                                                <option value="{{ salesperson.id }}">{{ salesperson.full_name }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <select tabindex="18" class="form-control form-control-sm select2div" style="width:100%" name="salesperson">
+                                                <option val-e="">**Select Personal Trainer**</option>
+                                                {% for personaltrainer in personaltrainers %}
+                                                <option value="{{ personaltrainer.id }}">{{ personaltrainer.full_name }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-2">
+                                        <div class="input-group">
+                                            <div class="custom-file">
+                                                <input type="file" name="contract" class='custom-file-input' accept="application/pdf" id="contract" placeholder="Contract" />
+                                                <label class="custom-file-label">Upload Contract</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row justify-content-between">
+                                    <button type="button" data-action="prev" class="btn btn-primary u-stepper-btn">Previous</button>
+                                    <button type="button" data-action="next" id="2" class="btn btn-primary u-stepper-btn">Next</button>
+                                </div>
+                            </form>
+                            </div><!--MEMBERSHIP-->
+                            <div class="content" id="bankinfo">
+                                <form method="POST" id="form3">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <select name="bank" tabindex="19" id="bank" class="form-control form-control-sm">
+                                                    <option value="">**Select Bank**</option>
+                                                    {% for bank in banks  %}
+                                                    <option value="{{ bank.id }}">{{ bank.name }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <select name="card_type" tabindex="20" id="card_type" class="form-control form-control-sm">
+                                                    <option value="">**Select Card Type**</option>
+                                                    {% for value,key in card_types  %}
+                                                    <option value="{{ value }}">{{ key }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <input type="text" tabindex="21" name="card_holder" class="form-control form-control-sm" id="card_holder" placeholder="Card Holder" >
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="input-group date divcardexpiry" id="divcardexpiry" data-target-input="nearest">
+                                                <input type="text" tabindex="23" name="card_expiry" placeholder="Expiry Date" id="card_expiry" class="form-control form-control-sm datetimepicker-input" data-target="#divcardexpiry" />
+                                                <div class="input-group-append" data-target="#divcardexpiry" data-toggle="datetimepicker">
+                                                    <div class="input-group-text">
+                                                        <i class="fa fa-calendar"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <input type="text" tabindex="22" name="card_number" class="form-control form-control-sm" id="card_number" placeholder="Card Number">
+                                    </div>
+                                </div>
+                                <div class="row justify-content-between">
+                                    <button type="button" data-action="prev" class="btn btn-primary u-stepper-btn">Previous</button>
+                                    <button type="submit" data-action="submit" id="3" class="btn btn-primary u-stepper-btn">Submit</button>
+                                </div>
+                                </form>
                             </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <input type="number" tabindex="15" name="membership_term" class="form-control form-control-sm" id="membership_term" placeholder="Membership Term" >
-                        </div>
-                    </div>
-                </div><!--ROW END-->
-                <div class="row">
-                    <div class="col-md-4">
-                        <div class="input-group">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text">
-                                    <input type="checkbox" tabindex="16" name="access_key_released" id="access_key_released" title="Released?">
-                                </span>
-                            </div>
-                            <input type="text" tabindex="16" name="access_key" class="form-control form-control-sm" id="access_key" placeholder="Access Key" >
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <select tabindex="17" class="form-control form-control-sm select2div" style="width:100%" name="salesperson">
-                                <option val-e="">**Select Sales Person**</option>
-                                {% for salesperson in salespersons %}
-                                  <option value="{{ salesperson.id }}">{{ salesperson.full_name }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <select tabindex="18" class="form-control form-control-sm select2div" style="width:100%" name="salesperson">
-                                <option val-e="">**Select Personal Trainer**</option>
-                                {% for personaltrainer in personaltrainers %}
-                                  <option value="{{ personaltrainer.id }}">{{ personaltrainer.full_name }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                    </div>
-                </div><!--ROW END-->
+                        </div><!--BS STEPPER-CONTENT-->
+                    </div><!--BS_STEPPER-->
             </div><!--END MODAL BODY-->
             <div class="modal-footer justify-content-between">
-              <button type="submit" id="btnAction" class="btn btn-primary">Save changes</button>
             </div> 
-            </form>
           </div>
           <!-- /.modal-content -->
         </div>
@@ -252,5 +356,7 @@
 <script src="{% static 'plugins/jquery-validation/jquery.validate.min.js' %}"></script>
 <script src="{% static 'plugins/jquery-validation/additional-methods.min.js' %}"></script>
 <script src="{% static 'plugins/select2/js/select2.js' %}"></script>
+<script src="{% static 'plugins/bs-stepper/js/bs-stepper.min.js' %}"></script>
+<script src="{% static 'plugins/bs-custom-file-input/bs-custom-file-input.min.js' %}"></script>
 <script src="{% static 'js/member.js' %}"></script>
 {% endblock extrajs %}

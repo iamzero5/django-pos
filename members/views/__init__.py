@@ -2,6 +2,7 @@ from .member import *
 from .membership import *
 from .salesperson import *
 from .personaltrainer import *
+from .bank import *
 import datetime
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
