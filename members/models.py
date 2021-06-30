@@ -37,13 +37,16 @@ class Branch(CommonFields):
     email = models.EmailField(max_length=150,null=True)
 
 class MembershipTerm(CommonFields):
-    days = models.IntegerField()
+    month = models.IntegerField()
     valid_from = models.DateField(null=True)
     valid_to = models.DateField(null=True)
     
     def __str__(self):
-        post_text = " Days" if self.days > 1 else " Day"
-        return str(self.days) + post_text
+        post_text = " Months" if self.month > 1 else " Month"
+        return str(self.month) + post_text
+
+    def get_absolute_url(self):
+        return reverse("membershipterm_api", kwargs={"pk": self.pk})
     
 
 class Membership(CommonFields):
@@ -125,7 +128,7 @@ class Member(Person):
     membership = models.ForeignKey(Membership,on_delete=models.CASCADE,null=True)
     membership_start = models.DateField(null=True)
     membership_end = models.DateField(null=True)
-    membership_term = models.PositiveIntegerField(default=0)
+    membership_term = models.ForeignKey(MembershipTerm,on_delete=models.CASCADE)
     membership_status = models.CharField(max_length=2,choices=MEMBERSTATUSES,default='N')
     access_key = models.CharField(max_length=100,null=True,unique=True)
     access_key_released = models.BooleanField(default=False)
@@ -140,6 +143,9 @@ class Member(Person):
     card_type = models.CharField(max_length=2,choices=CARD_TYPES,blank=True)
 
     #user = models.OneToOneField(User,on_delete=models.CASCADE,related_name="%(class)s_user",null=True)
+    @property
+    def member_since(self):
+        return 'Today' if self.membership_start == datetime.today() else self.membership_start
 
     def __str__(self):
         return f'{self.last_name}, {self.first_name}'

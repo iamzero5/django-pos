@@ -1,7 +1,28 @@
 from rest_framework import serializers
-from .models import Member,Membership,SalesPerson,PersonalTrainer,Bank
+from .models import Member,Membership,SalesPerson,PersonalTrainer,Bank,MembershipTerm
 import datetime
 
+class MembershipTermSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = MembershipTerm
+        fields = ['month','valid_from','valid_to','url']
+
+    url = serializers.URLField(source="get_absolute_url",read_only=True)
+
+    def create(self,validated_data):
+        user = self.context.get('user')
+        validated_data['created_by'] = user
+        validated_data['updated_by'] = user
+        return MembershipTerm.objects.create(**validated_data)
+
+    def update(self,instance,validated_data):
+        user = self.context.get('user')
+        instance.month = validated_data.get('days',instance.month)
+        instance.valid_from = validated_data.get('valid_from',instance.valid_from)
+        instance.valid_to = validated_data.get('valid_to',instance.valid_to)
+        instance.updated_by = user
+        instance.save()
+        return instance
 class MembershipSerializers(serializers.ModelSerializer):
     class Meta:
         model = Membership
@@ -29,7 +50,7 @@ class MemberSerializers(serializers.ModelSerializer):
     class Meta:
         model = Member
         fields = ['id','first_name','middle_name','last_name','gender','birthdate','street','barangay','city','province',
-        'telephone','mobile','email','membership','membership_start','membership_term','sales_person',
+        'telephone','mobile','email','membership','membership_start','membership_term','membership_status','sales_person',
         'personal_trainer','access_key','access_key_released','bank','card_type','card_holder','card_number','card_expiry',
         'url','membership_status_display']
     
@@ -41,8 +62,8 @@ class MemberSerializers(serializers.ModelSerializer):
         validated_data['updated_by'] = self.context['user']
         validated_data['membership_status'] = 'A' if validated_data['membership'] != None else 'N'
         validated_data['access_key_released'] = True if validated_data['membership'] != None else False
-        validated_data['membership_end'] = validated_data.get('membership_start') + datetime.timedelta(days=validated_data.get('membership_term'))
-        if validated_data['membership_end'] > datetime.date.today():
+        validated_data['membership_end'] = validated_data.get('membership_start') + datetime.timedelta(days=int(validated_data.get('membership_term').month)*30)
+        if validated_data['membership_end'] < datetime.date.today() and validated_data['membership_status'] !='F':
             validated_data['membership_status'] = 'I'
         return Member.objects.create(**validated_data)
 
@@ -75,8 +96,10 @@ class MemberSerializers(serializers.ModelSerializer):
         instance.access_key_released = True if validated_data.get('access_key_released') != None else False
         instance.membership_end = instance.membership_start + datetime.timedelta(days=instance.membership_term)
         today = datetime.date.today()
-        if instance.membership_end < today:
+        if instance.membership_end < today and instance.membership_status != 'F':
             instance.membership_status = 'I'
+        else:
+            instance.membership_status = validated_data.get('membership_status',instance.membership_status)
         instance.updated_by = user
         instance.save()
         return instance

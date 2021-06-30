@@ -13,10 +13,11 @@ from django.db.models import Sum
 
 @login_required
 def index(request):
-    yesterday = datetime.date.today() - datetime.timedelta(days=1)
+    yesterday = datetime.date.today() - datetime.timedelta(days=7)
     week = datetime.date.today() + datetime.timedelta(days=7)
     new_members = Member.objects.filter(membership_start__gte=yesterday).count()
+    members = Member.objects.all().order_by('-membership_start')[:8]
     month = datetime.date.today().month
     sales = SalesOrder.objects.filter(posting_date__month=month).aggregate(grand_total=Sum("total_amount"))
     renewals = Member.objects.filter(membership_end__lte=week).count()
-    return render(request,'members/index.html',{"new_members":new_members,"renewals":renewals,"sales":sales})
+    return render(request,'members/index.html',{"members":members,"new_members":new_members,"renewals":renewals,"sales":sales})

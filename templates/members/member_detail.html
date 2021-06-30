@@ -1,0 +1,359 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}
+    Member Profile - {{ object.full_name }}
+{% endblock title %}
+
+
+{% block headertitle %}
+    Member Profile
+{% endblock headertitle %}
+
+
+{% block rightheader %}
+<div class="btn-group float-right">
+    <a class="btn bg-orange" href="{% url 'members' %}"><span class="text-white">Back to List</span></a>
+</div>
+{% endblock rightheader %}
+    
+
+{% block extracss %}
+  <link rel="stylesheet" href="{% static 'plugins/datatables-bs4/css/dataTables.bootstrap4.min.css' %}">
+  <link rel="stylesheet" href="{% static 'plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
+  <link rel="stylesheet" href="{% static 'plugins/datatables-buttons/css/buttons.bootstrap4.min.css' %}"><!-- SweetAlert2 -->
+  <link rel="stylesheet" href="{% static 'plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css' %}">
+  <link rel="stylesheet" href="{% static 'plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css' %}">
+  <link href="{% static 'plugins/select2/css/select2.css' %}" rel="stylesheet" />
+{% endblock extracss %}
+    
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-3">
+            <!-- Profile Image -->
+            <div class="card card-orange card-outline">
+              <div class="card-body box-profile">
+                <div class="text-center">
+                  <img class="profile-user-img img-fluid img-circle"
+                       src="/media/{{ object.profile_pic }}"
+                       alt="User profile picture">
+                </div>
+
+                <h3 class="profile-username text-center">{{ object.full_name }}</h3>
+
+                <!-- <p class="text-muted text-center">{{ object.get_membership_status_display }}</p> -->
+
+                <ul class="list-group list-group-unbordered mb-3">
+                  <li class="list-group-item">
+                    <b>Status</b> <a class="float-right">{{ object.get_membership_status_display }}</a>
+                  </li>
+                  <li class="list-group-item">
+                    <b>Following</b> <a class="float-right">543</a>
+                  </li>
+                  <li class="list-group-item">
+                    <b>Friends</b> <a class="float-right">13,287</a>
+                  </li>
+                </ul>
+
+                <a href="#" class="btn bg-orange btn-block"><b class="text-white">Update Photo</b></a>
+              </div>
+              <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+        </div><!-- /. col-->
+        <div class="col-md-9">
+            <div class="card">
+              <div class="card-header p-2">
+                <ul class="nav nav-pills">
+                  <li class="nav-item"><a class="nav-link active" href="#activity" data-toggle="tab">Information</a></li>
+                  <li class="nav-item"><a class="nav-link" href="#timeline" data-toggle="tab">Membership</a></li>
+                  <li class="nav-item"><a class="nav-link" href="#settings" data-toggle="tab">Bank</a></li>
+                </ul>
+              </div><!-- /.card-header -->
+              <div class="card-body">
+                <div class="tab-content">
+                  <div class="active tab-pane" id="activity">
+                    <form method="POST" id="form1" action="{% url 'member' %}">
+                        {% csrf_token %}
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <input type="text" value="{{ object.first_name }}" tabindex="1" autofocus="autofocus" name="first_name" class="form-control form-control-sm" id="first_name" placeholder="First name" >
+                            </div>
+                            <div class="form-group">
+                                <input type="text" value="{{ object.last_name }}" tabindex="3" name="last_name" class="form-control form-control-sm" id="last_name" placeholder="Last name" >
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <input type="text" value="{{ object.middle_name }}" tabindex="2" name="middle_name" class="form-control form-control-sm" id="middle_name" placeholder="Middle name">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <select name="gender" tabindex="4" id="gender" class="form-control form-control-sm" >
+                                    <option value="">Gender</option>
+                                    {% for value,gender in object.GENDERS  %}
+                                    <option 
+                                    {% if object.gender == value %}
+                                        selected
+                                    {% endif %}
+                                         value="{{ value }}">{{ gender }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <div class="input-group date" id="divbirthdate" data-target-input="nearest">
+                                    <input type="text" data-target="#birthdate" data-toggle="datetimepicker" value="{{ object.birthdate }}" tabindex="5" name="birthdate" placeholder="Birthday" id="birthdate" class="form-control form-control-sm datetimepicker-input" data-target="#divbirthdate"  />
+                                    <div class="input-group-append" data-target="#birthdate" data-toggle="datetimepicker">
+                                        <div class="input-group-text">
+                                            <i class="fa fa-calendar"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <input type="text" value="{{ object.street }}" tabindex="6" name="street" class="form-control form-control-sm" id="street" placeholder="Street" >
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <input type="text" value="{{ object.barangay }}" tabindex="7" name="barangay" class="form-control form-control-sm" id="barangay" placeholder="Barangay" >
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <input type="text" value="{{ object.city }}" tabindex="8" name="city" class="form-control form-control-sm" id="city" placeholder="City" >
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <input type="text" value="{{ object.province }}" tabindex="9" name="province" class="form-control form-control-sm" id="province" placeholder="Province" >
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <input type="text" value="{{ object.telephone }}" tabindex="10" name="telephone" class="form-control form-control-sm" id="telephone" placeholder="Telephone" data-inputmask='"mask": "(99) 9999-9999"' data-mask >
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <input type="text" value="{{ object.mobile }}" tabindex="11" name="mobile" class="form-control form-control-sm" id="mobile" placeholder="Mobile Number" data-inputmask='"mask": "\\0\\999-999-9999"' data-mask  >
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <input type="email" value="{{ object.email }}" tabindex="12" name="email" class="form-control form-control-sm" id="email" placeholder="Email" >
+                            </div>
+                        </div>
+                    </div>
+                    </form>
+                  </div>
+                  <!-- /.tab-pane -->
+                  <div class="tab-pane" id="timeline">
+                    <form method="POST" id="form2">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <input type="hidden" name="membership_status" value="N" />
+                                    <select name="membership" tabindex="13" id="membership" class="form-control form-control-sm">
+                                        <option value="">**Select Membership**</option>
+                                        {% for membership in memberships  %}
+                                        <option 
+                                        {% if object.membership.id == membership.id %}
+                                            selected
+                                        {% endif %}
+                                             value="{{ membership.id }}">{{ membership.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <div class="input-group date" id="divmembershipdate" data-target-input="nearest">
+                                        <input type="text" data-target="#membership_start" data-toggle="datetimepicker" value="{{ object.membership_start }}" tabindex="14" name="membership_start" placeholder="Membership Date" id="membership_start" class="form-control form-control-sm datetimepicker-input" data-target="#divmembershipdate" />
+                                        <div class="input-group-append" data-target="#membership_start" data-toggle="datetimepicker">
+                                            <div class="input-group-text">
+                                                <i class="fa fa-calendar"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <select name="membership_term" tabindex="15" id="membership_term" class="form-control form-control-sm">
+                                        <option value="">**Select Membership Term**</option>
+                                        {% for membershipterm in membershipterms  %}
+                                        <option 
+                                        {% if object.membership_term.id == membershipterm.id %}
+                                            selected
+                                        {% endif %}
+                                             value="{{ membershipterm.id }}">{{ membershipterm }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                        </div><!--ROW END-->
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">
+                                            <input type="checkbox" 
+                                            {% if object.access_key_released %}
+                                                checked
+                                            {% endif %}
+                                                 tabindex="16" name="access_key_released" id="access_key_released" title="Released?">
+                                        </span>
+                                    </div>
+                                    <input type="text" tabindex="16" value="{{ object.access_key }}" name="access_key" class="form-control form-control-sm" id="access_key" placeholder="Access Key" >
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <select tabindex="17" class="form-control form-control-sm select2div" style="width:100%" name="salesperson">
+                                        <option val-e="">**Select Sales Person**</option>
+                                        {% for salesperson in salespersons %}
+                                        <option 
+                                        {% if object.salesperson.id == salesperson.id %}
+                                            selected
+                                        {% endif %}
+                                             value="{{ salesperson.id }}">{{ salesperson.full_name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <select tabindex="18" class="form-control form-control-sm select2div" style="width:100%" name="salesperson">
+                                        <option val-e="">**Select Personal Trainer**</option>
+                                        {% for personaltrainer in personaltrainers %}
+                                        <option {% if object.personaltrainer.id == personaltrainer.id %}
+                                        selected
+                                    {% endif %} value="{{ personaltrainer.id }}">{{ personaltrainer.full_name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-2">
+                                <div class="input-group">
+                                    <div class="custom-file">
+                                        <input type="file" name="contract" class='custom-file-input' accept="application/pdf" id="contract" placeholder="Contract" />
+                                        <label class="custom-file-label">Upload Contract</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                  </div>
+                  <!-- /.tab-pane -->
+
+                  <div class="tab-pane" id="settings">
+                    <form method="POST" id="form3">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <select name="bank" tabindex="19" id="bank" class="form-control form-control-sm">
+                                        <option value="">**Select Bank**</option>
+                                        {% for bank in banks  %}
+                                        <option 
+                                        {% if object.bank.id == bank.id %}
+                                            selected
+                                        {% endif %}
+                                             value="{{ bank.id }}">{{ bank.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <select name="card_type" tabindex="20" id="card_type" class="form-control form-control-sm">
+                                        <option value="">**Select Card Type**</option>
+                                        {% for value,key in object.CARD_TYPES  %}
+                                        <option 
+                                        {% if object.card_type == value %}
+                                            selected
+                                        {% endif %}
+                                             value="{{ value }}">{{ key }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <input type="text" value="{{ object.card_holder }}" tabindex="21" name="card_holder" class="form-control form-control-sm" id="card_holder" placeholder="Card Holder" >
+                            </div>
+                            <div class="form-group">
+                                <div class="input-group date" id="divcardexpiry" data-target-input="nearest">
+                                    <input type="text" value="{{ object.card_expiry }}" data-target="#card_expiry" data-toggle="datetimepicker" tabindex="23" name="card_expiry" placeholder="Expiry Date" id="card_expiry" class="form-control form-control-sm datetimepicker-input" />
+                                    <div class="input-group-append" data-target="#card_expiry" data-toggle="datetimepicker">
+                                        <div class="input-group-text">
+                                            <i class="fa fa-calendar"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <input type="text" value="{{ object.card_number }}" tabindex="22" name="card_number" class="form-control form-control-sm" id="card_number" data-inputmask='"mask": "9999 9999 9999 9999"' data-mask placeholder="Card Number">
+                        </div>
+                    </div>
+                    <div class="row justify-content-between">
+                        <button type="button" data-action="prev" class="btn btn-primary u-stepper-btn">Previous</button>
+                        <button type="submit" data-action="submit" id="3" class="btn btn-primary u-stepper-btn">Submit</button>
+                    </div>
+                    </form>
+                  </div>
+                  <!-- /.tab-pane -->
+                </div>
+                <!-- /.tab-content -->
+              </div><!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+          </div>
+          <!-- /.col -->
+    </div><!-- /. row -->
+{% endblock content %}
+    
+
+{% block extrajs %}
+    <!-- DataTables  & Plugins -->
+<script src="{% static 'plugins/datatables/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'plugins/datatables-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
+<script src="{% static 'plugins/datatables-responsive/js/dataTables.responsive.min.js' %}"></script>
+<script src="{% static 'plugins/datatables-responsive/js/responsive.bootstrap4.min.js' %}"></script>
+<script src="{% static 'plugins/datatables-buttons/js/dataTables.buttons.min.js' %}"></script>
+<script src="{% static 'plugins/datatables-buttons/js/buttons.bootstrap4.min.js' %}"></script>
+<script src="{% static 'plugins/jszip/jszip.min.js' %}"></script>
+<script src="{% static 'plugins/pdfmake/pdfmake.min.js' %}"></script>
+<script src="{% static 'plugins/pdfmake/vfs_fonts.js' %}"></script>
+<script src="{% static 'plugins/datatables-buttons/js/buttons.html5.min.js' %}"></script>
+<script src="{% static 'plugins/datatables-buttons/js/buttons.print.min.js' %}"></script>
+<script src="{% static 'plugins/datatables-buttons/js/buttons.colVis.min.js' %}"></script>
+<script src="{% static 'plugins/sweetalert2/sweetalert2.min.js' %}"></script>
+<script src="{% static 'plugins/moment/moment.min.js' %}"></script>
+<script src="{% static 'plugins/inputmask/jquery.inputmask.min.js' %}"></script>
+<script src="{% static 'plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js' %}"></script>
+<!-- jquery-validation -->
+<script src="{% static 'plugins/jquery-validation/jquery.validate.min.js' %}"></script>
+<script src="{% static 'plugins/jquery-validation/additional-methods.min.js' %}"></script>
+<script src="{% static 'plugins/select2/js/select2.js' %}"></script>
+<script src="{% static 'js/member_detail.js' %}"></script>
+{% endblock extrajs %}

@@ -48,9 +48,10 @@
                     <td>{{ member.get_membership_status_display }}</td>
                     <td>
                         <div class="btn-group float-right" id="action-{{ member.id }}">
-                            <button class="btn btn-warning" data-id="{{ member.id }}" data-url="{% url 'member_api' pk=member.id %}" data-toggle="modal" data-target="#modal" data-action="Edit" title="Edit">
+                            <!-- <button class="btn btn-warning" data-id="{{ member.id }}" data-url="{% url 'member_api' pk=member.id %}" data-toggle="modal" data-target="#modal" data-action="Edit" title="Edit">
                                 <i class="fas fa-user-edit"></i> Edit
-                            </button>
+                            </button> -->
+                            <a class="btn btn-warning" href="{% url 'member-detail' member.id %}"><i class="fas fa-user-edit"></i> Edit</a>
                             <button class="btn btn-danger btnDelete" data-id="{{ member.id }}" data-url="{% url 'member_api' pk=member.id %}" data-action="Delete" title="Delete">
                                 <i class="fas fa-user-minus"></i> Delete
                             </button>
@@ -76,8 +77,6 @@
               </button>
             </div>
             <div class="modal-body">
-                <form method="POST" id="form1" action="{% url 'member' %}">
-                    {% csrf_token %}
                     <div class="bs-stepper linear">
                         <div class="bs-stepper-header" role="tablist">
                             <div class="step active" data-target="#personalinfo">
@@ -103,8 +102,11 @@
                         <div class="bs-stepper-content">
                             <div id="personalinfo" class="content active dstepper-block" role="tabpanel">
                                 <div class="row">
+                                   
                                     <div class="col-md-6">
                                         <div class="form-group">
+                                            <form method="POST" id="form1" action="{% url 'member' %}">
+                                        {% csrf_token %}
                                             <input type="text" tabindex="1" autofocus="autofocus" name="first_name" class="form-control form-control-sm" id="first_name" placeholder="First name" >
                                         </div>
                                         <div class="form-group">
@@ -198,6 +200,7 @@
                                 <div class="row">
                                     <div class="col-md-4">
                                         <div class="form-group">
+                                            <input type="hidden" name="membership_status" value="N" />
                                             <select name="membership" tabindex="13" id="membership" class="form-control form-control-sm">
                                                 <option value="">**Select Membership**</option>
                                                 {% for membership in memberships  %}
@@ -220,7 +223,12 @@
                                     </div>
                                     <div class="col-md-4">
                                         <div class="form-group">
-                                            <input type="number" tabindex="15" name="membership_term" class="form-control form-control-sm" id="membership_term" placeholder="Membership Term" >
+                                            <select name="membership_term" tabindex="15" id="membership_term" class="form-control form-control-sm">
+                                                <option value="">**Select Membership Term**</option>
+                                                {% for membershipterm in membershipterms  %}
+                                                <option value="{{ membershipterm.id }}">{{ membershipterm }}</option>
+                                                {% endfor %}
+                                            </select>
                                         </div>
                                     </div>
                                 </div><!--ROW END-->
@@ -311,7 +319,7 @@
                                         </div>
                                     </div>
                                     <div class="col-md-6">
-                                        <input type="text" tabindex="22" name="card_number" class="form-control form-control-sm" id="card_number" placeholder="Card Number">
+                                        <input type="text" tabindex="22" name="card_number" class="form-control form-control-sm" id="card_number" data-inputmask='"mask": "9999 9999 9999 9999"' data-mask placeholder="Card Number">
                                     </div>
                                 </div>
                                 <div class="row justify-content-between">

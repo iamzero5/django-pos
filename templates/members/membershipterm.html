@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}
+    Membership Term List
+{% endblock title %}
+
+
+{% block headertitle %}
+    Membership Term
+{% endblock headertitle %}
+
+
+{% block rightheader %}
+<div class="btn-group float-right">
+    <button class="btn btn-primary btn-block" data-toggle="modal" data-target="#modal" data-action="Add" title="New">
+        <i class="fas fa-id-card"></i> New
+    </button>
+</div>
+{% endblock rightheader %}
+    
+
+{% block extracss %}
+  <link rel="stylesheet" href="{% static 'plugins/datatables-bs4/css/dataTables.bootstrap4.min.css' %}">
+  <link rel="stylesheet" href="{% static 'plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
+  <link rel="stylesheet" href="{% static 'plugins/datatables-buttons/css/buttons.bootstrap4.min.css' %}"><!-- SweetAlert2 -->
+  <link rel="stylesheet" href="{% static 'plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css' %}">
+  <link rel="stylesheet" href="{% static 'plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css' %}">
+{% endblock extracss %}
+    
+
+{% block content %}
+    <div class="card">
+        <div class="card-body">
+        <table id="datatable" class="table table-bordered table-striped" data-csrf="{{ csrf_token }}">
+            <thead>
+                <th>Description</th>
+                <th>Valid From</th>
+                <th>Valid To</th>
+                <th>Action</th>
+            </thead>
+            <tbody>
+                {% for membershipterm in object_list %}
+                <tr id="{{ membershipterm.id }}">
+                    <td>{{ membershipterm }}</td>
+                    <td>{{ membershipterm.valid_from }}</td>
+                    <td>{{ membershipterm.valid_to }}</td>
+                    <td>
+                        <div class="btn-group" id="action-{{ membershipterm.id }}">
+                            <button class="btn btn-warning" data-id="{{ membershipterm.id }}" data-url="{% url 'membershipterm_api' pk=membershipterm.id %}" data-toggle="modal" data-target="#modal" data-action="Edit" title="Edit">
+                                <i class="fas fa-user-edit"></i> Edit
+                            </button>
+                            <button class="btn btn-danger btnDelete" data-id="{{ membershipterm.id }}" data-url="{% url 'membershipterm_api' pk=membershipterm.id %}" data-action="Delete" title="Delete">
+                                <i class="fas fa-user-minus"></i> Delete
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modal">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="overlay" style="display: none;">
+                <i class="fas fa-2x fa-sync fa-spin"></i>
+            </div>
+            <div class="modal-header">
+              <h4 class="modal-title" id="modalFormLabel">Default Modal</h4>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <form method="POST" id="form" data-create="{% url 'membershipterm' %}">
+                {% csrf_token %}
+            <div class="modal-body">
+                <div class="form-group">
+                    <input type="number" name="month" class="form-control" id="month" placeholder="Enter Number of Month/s" required>
+                </div>
+                <div class="form-group">
+                    <div class="input-group date divdate" id="divvalidfromdate" data-target-input="nearest">
+                        <input type="text" tabindex="14" name="valid_from" placeholder="Valid From" id="valid_from" class="form-control form-control-sm datetimepicker-input" data-target="#divvalidfromdate" />
+                        <div class="input-group-append" data-target="#divvalidfromdate" data-toggle="datetimepicker">
+                            <div class="input-group-text">
+                                <i class="fa fa-calendar"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="input-group date divdate" id="divvalidtodate" data-target-input="nearest">
+                        <input type="text" tabindex="14" name="valid_to" placeholder="Valid To" id="valid_to" class="form-control form-control-sm datetimepicker-input" data-target="#divvalidtodate" />
+                        <div class="input-group-append" data-target="#divvalidtodate" data-toggle="datetimepicker">
+                            <div class="input-group-text">
+                                <i class="fa fa-calendar"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer justify-content-between">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              <button type="submit" id="btnAction" class="btn btn-primary">Save changes</button>
+            </div> 
+            </form>
+          </div>
+          <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+      </div>
+      <!-- /.modal -->
+{% endblock content %}
+    
+
+{% block extrajs %}
+    <!-- DataTables  & Plugins -->
+<script src="{% static 'plugins/datatables/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'plugins/datatables-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
+<script src="{% static 'plugins/datatables-responsive/js/dataTables.responsive.min.js' %}"></script>
+<script src="{% static 'plugins/datatables-responsive/js/responsive.bootstrap4.min.js' %}"></script>
+<script src="{% static 'plugins/datatables-buttons/js/dataTables.buttons.min.js' %}"></script>
+<script src="{% static 'plugins/datatables-buttons/js/buttons.bootstrap4.min.js' %}"></script>
+<script src="{% static 'plugins/moment/moment.min.js' %}"></script>
+<script src="{% static 'plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js' %}"></script>
+<script src="{% static 'plugins/jszip/jszip.min.js' %}"></script>
+<script src="{% static 'plugins/pdfmake/pdfmake.min.js' %}"></script>
+<script src="{% static 'plugins/pdfmake/vfs_fonts.js' %}"></script>
+<script src="{% static 'plugins/datatables-buttons/js/buttons.html5.min.js' %}"></script>
+<script src="{% static 'plugins/datatables-buttons/js/buttons.print.min.js' %}"></script>
+<script src="{% static 'plugins/datatables-buttons/js/buttons.colVis.min.js' %}"></script>
+<script src="{% static 'plugins/sweetalert2/sweetalert2.min.js' %}"></script>
+<script src="{% static 'js/membershipterm.js' %}"></script>
+{% endblock extrajs %}

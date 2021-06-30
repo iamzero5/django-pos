@@ -14,66 +14,44 @@
 {% block content %}
     <!-- Info boxes -->
     <div class="row">
-        <div class="col-12 col-sm-6 col-md-3">
-          <div class="info-box">
-            <span class="info-box-icon bg-danger elevation-1"><i class="fas fa-hand-holding-usd"></i></span>
+      <div class="col-md-6">
+        <!-- USERS LIST -->
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Latest Members</h3>
 
-            <div class="info-box-content">
-              <span class="info-box-text">Receivables</span>
-              <span class="info-box-number">
-                10
-                <small>%</small>
-              </span>
+            <div class="card-tools">
+              <span class="badge badge-danger">{{ new_members }} New 
+              {% if new_members > 1 %}
+                Members
+              {% else %}
+                Member
+              {% endif %}
+                </span>
             </div>
-            <!-- /.info-box-content -->
           </div>
-          <!-- /.info-box -->
-        </div>
-        <!-- /.col -->
-        <div class="col-12 col-sm-6 col-md-3">
-          <div class="info-box mb-3">
-            <span class="info-box-icon bg-warning elevation-1"><i class="fas fa-check-double"></i></span>
-
-            <div class="info-box-content">
-              <span class="info-box-text">Renewals</span>
-              <span class="info-box-number">{{ renewals }}</span>
-            </div>
-            <!-- /.info-box-content -->
+          <!-- /.card-header -->
+          <div class="card-body p-0">
+            <ul class="users-list clearfix">
+              {% for member in members  %}
+              <li>
+                <img src="/media/{{ member.profile_pic }}" width="64" height="64" alt="Profile Picture">
+                <a class="users-list-name" href="#">{{ member.first_name }}</a>
+                <span class="users-list-date">{{ member.member_since }}</span>
+              </li>
+              {% endfor %}
+            </ul>
+            <!-- /.users-list -->
           </div>
-          <!-- /.info-box -->
+          <!-- /.card-body -->
+          <!-- <div class="card-footer text-center">
+          </div> -->
+          <!-- /.card-footer -->
         </div>
-        <!-- /.col -->
-
-        <!-- fix for small devices only -->
-        <div class="clearfix hidden-md-up"></div>
-
-        <div class="col-12 col-sm-6 col-md-3">
-          <div class="info-box mb-3">
-            <span class="info-box-icon bg-success elevation-1"><i class="fas fa-shopping-cart"></i></span>
-
-            <div class="info-box-content">
-              <span class="info-box-text">Sales</span>
-              <span class="info-box-number">{{ sales.grand_total }}</span>
-            </div>
-            <!-- /.info-box-content -->
-          </div>
-          <!-- /.info-box -->
-        </div>
-        <!-- /.col -->
-        <div class="col-12 col-sm-6 col-md-3">
-          <div class="info-box mb-3">
-            <span class="info-box-icon bg-info elevation-1"><i class="fas fa-users"></i></span>
-
-            <div class="info-box-content">
-              <span class="info-box-text">New Members</span>
-              <span class="info-box-number">{{ new_members }}</span>
-            </div>
-            <!-- /.info-box-content -->
-          </div>
-          <!-- /.info-box -->
-        </div>
-        <!-- /.col -->
+        <!--/.card -->
       </div>
+      <!-- /.col -->
+    </div>
       <!-- /.row -->
 {% endblock content %}
     

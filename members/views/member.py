@@ -2,12 +2,12 @@ import datetime
 from django.http import Http404
 from django.contrib.auth.mixins import LoginRequiredMixin,PermissionRequiredMixin
 from django.shortcuts import get_object_or_404
-from django.views.generic import ListView
+from django.views.generic import ListView,DetailView
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from members.models import Member,Membership, SalesPerson,PersonalTrainer, Bank
+from members.models import Member,Membership, MembershipTerm, SalesPerson,PersonalTrainer, Bank
 from members.serializers import MemberSerializers
 from django.contrib.auth.decorators import login_required
 
@@ -22,10 +22,26 @@ class MemberListView(PermissionRequiredMixin,LoginRequiredMixin,ListView):
         context['gender_choices'] = Member.GENDERS
         context['card_types'] = Member.CARD_TYPES
         context['memberships'] = Membership.objects.all()
+        context['membershipterms'] = MembershipTerm.objects.all().order_by('month')
         context['salespersons'] = SalesPerson.objects.filter(active=True)
         context['personaltrainers'] = PersonalTrainer.objects.filter(active=True)
         context['banks'] = Bank.objects.all()
         return context
+
+class MemberDetailView(PermissionRequiredMixin,LoginRequiredMixin,DetailView):
+    permission_required = ('is_staff','members.view_member')
+    model = Member
+    template_name = "members/member_detail.html"
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(MemberDetailView,self).get_context_data(*args, **kwargs)
+        context['memberships'] = Membership.objects.all()
+        context['membershipterms'] = MembershipTerm.objects.all().order_by('month')
+        context['salespersons'] = SalesPerson.objects.filter(active=True)
+        context['personaltrainers'] = PersonalTrainer.objects.filter(active=True)
+        context['banks'] = Bank.objects.all()
+        return context
+
 
 @login_required
 @api_view(['POST'])
