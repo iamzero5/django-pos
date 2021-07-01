@@ -3,6 +3,7 @@ from django.http import Http404
 from django.contrib.auth.mixins import LoginRequiredMixin,PermissionRequiredMixin
 from django.shortcuts import get_object_or_404
 from django.views.generic import ListView,DetailView
+from django.db.models import Q
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view
@@ -11,6 +12,8 @@ from members.models import Member,Membership, MembershipTerm, SalesPerson,Person
 from members.serializers import MemberSerializers
 from django.contrib.auth.decorators import login_required
 
+
+today = datetime.date.today()
 #MemberModule
 class MemberListView(PermissionRequiredMixin,LoginRequiredMixin,ListView):
     permission_required = ('is_staff','members.view_member')
@@ -22,7 +25,7 @@ class MemberListView(PermissionRequiredMixin,LoginRequiredMixin,ListView):
         context['gender_choices'] = Member.GENDERS
         context['card_types'] = Member.CARD_TYPES
         context['memberships'] = Membership.objects.all()
-        context['membershipterms'] = MembershipTerm.objects.all().order_by('month')
+        context['membershipterms'] = MembershipTerm.objects.filter(valid_from__gte=today,valid_to__lte=today).order_by('month')
         context['salespersons'] = SalesPerson.objects.filter(active=True)
         context['personaltrainers'] = PersonalTrainer.objects.filter(active=True)
         context['banks'] = Bank.objects.all()
@@ -36,7 +39,7 @@ class MemberDetailView(PermissionRequiredMixin,LoginRequiredMixin,DetailView):
     def get_context_data(self, *args, **kwargs):
         context = super(MemberDetailView,self).get_context_data(*args, **kwargs)
         context['memberships'] = Membership.objects.all()
-        context['membershipterms'] = MembershipTerm.objects.all().order_by('month')
+        context['membershipterms'] = MembershipTerm.objects.raw("SELECT * FROM members_membershipterm where (valid_from<='"+ str(today) +"' and valid_to>='"+ str(today) +"') or (valid_from is null and valid_to is null) order by month ASC")
         context['salespersons'] = SalesPerson.objects.filter(active=True)
         context['personaltrainers'] = PersonalTrainer.objects.filter(active=True)
         context['banks'] = Bank.objects.all()
