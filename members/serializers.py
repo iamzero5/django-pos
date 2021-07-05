@@ -61,7 +61,7 @@ class MemberSerializers(serializers.ModelSerializer):
         validated_data['created_by'] = self.context['user']
         validated_data['updated_by'] = self.context['user']
         validated_data['membership_status'] = 'A' if validated_data['membership'] != None else 'N'
-        validated_data['access_key_released'] = True if validated_data['membership'] != None else False
+        validated_data['access_key_released'] = True if validated_data['access_key_released'] != None else False
         validated_data['membership_end'] = validated_data.get('membership_start') + datetime.timedelta(days=int(validated_data.get('membership_term').month)*30)
         if validated_data['membership_end'] < datetime.date.today() and validated_data['membership_status'] !='F':
             validated_data['membership_status'] = 'I'
@@ -94,12 +94,10 @@ class MemberSerializers(serializers.ModelSerializer):
         instance.membership_status = 'A' if instance.membership != None else 'N'
         instance.access_key = validated_data.get('access_key',instance.access_key)
         instance.access_key_released = True if validated_data.get('access_key_released') != None else False
-        instance.membership_end = instance.membership_start + datetime.timedelta(days=instance.membership_term)
+        instance.membership_end = instance.membership_start + datetime.timedelta(days=int(instance.membership_term.month)*30)
         today = datetime.date.today()
         if instance.membership_end < today and instance.membership_status != 'F':
             instance.membership_status = 'I'
-        else:
-            instance.membership_status = validated_data.get('membership_status',instance.membership_status)
         instance.updated_by = user
         instance.save()
         return instance

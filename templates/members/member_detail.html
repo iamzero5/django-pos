@@ -47,17 +47,27 @@
 
                 <ul class="list-group list-group-unbordered mb-3">
                   <li class="list-group-item">
-                    <b>Status</b> <a class="float-right">{{ object.get_membership_status_display }}</a>
+                    <b>Status</b> <a class="float-right 
+                    {% if object.membership_status == 'I' %}
+                        text-danger
+                    {% elif object.membership_status == 'F' %}
+                        text-info
+                    {% else %}
+                        text-success
+                    {% endif %}
+                        ">{{ object.get_membership_status_display }}</a>
                   </li>
                   <li class="list-group-item">
-                    <b>Following</b> <a class="float-right">543</a>
-                  </li>
-                  <li class="list-group-item">
-                    <b>Friends</b> <a class="float-right">13,287</a>
+                    <b>Contract:</b> 
+                    <div class="float-right">
+                        <a href="/media/{{ object.contract }}" class="text-orange"> Download</a> | 
+                        <a data-target="modal" href="#" class="text-orange">View</a>
+                    </div>
                   </li>
                 </ul>
 
                 <a href="#" class="btn bg-orange btn-block"><b class="text-white">Update Photo</b></a>
+                <a href="#" class="btn bg-warning btn-block"><b class="text-white">Update Contract</b></a>
               </div>
               <!-- /.card-body -->
             </div>
@@ -75,7 +85,7 @@
               <div class="card-body">
                 <div class="tab-content">
                   <div class="active tab-pane" id="activity">
-                    <form method="POST" id="form1" action="{% url 'member' %}">
+                    <form method="PUT" id="form1" action="{% url 'member_api' object.id %}">
                         {% csrf_token %}
                     <div class="row">
                         <div class="col-md-6">
@@ -165,12 +175,12 @@
                   </div>
                   <!-- /.tab-pane -->
                   <div class="tab-pane" id="timeline">
-                    <form method="POST" id="form2">
+                    <form method="PUT" id="form2">
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <input type="hidden" name="membership_status" value="N" />
-                                    <select name="membership" tabindex="13" id="membership" class="form-control form-control-sm">
+                                    <label for="salesperson">Membership</label>
+                                    <select disabled name="membership" tabindex="13" id="membership" class="form-control form-control-sm">
                                         <option value="">**Select Membership**</option>
                                         {% for membership in memberships  %}
                                         <option 
@@ -184,8 +194,9 @@
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
+                                    <label for="salesperson">Member Since</label>
                                     <div class="input-group date" id="divmembershipdate" data-target-input="nearest">
-                                        <input type="text" data-target="#membership_start" data-toggle="datetimepicker" value="{{ object.membership_start }}" tabindex="14" name="membership_start" placeholder="Membership Date" id="membership_start" class="form-control form-control-sm datetimepicker-input" data-target="#divmembershipdate" />
+                                        <input disabled type="text" data-target="#membership_start" data-toggle="datetimepicker" value="{{ object.membership_start }}" tabindex="14" name="membership_start" placeholder="Membership Date" id="membership_start" class="form-control form-control-sm datetimepicker-input" data-target="#divmembershipdate" />
                                         <div class="input-group-append" data-target="#membership_start" data-toggle="datetimepicker">
                                             <div class="input-group-text">
                                                 <i class="fa fa-calendar"></i>
@@ -196,7 +207,8 @@
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <select name="membership_term" tabindex="15" id="membership_term" class="form-control form-control-sm">
+                                    <label for="salesperson">Term</label>
+                                    <select disabled name="membership_term" tabindex="15" id="membership_term" class="form-control form-control-sm">
                                         <option value="">**Select Membership Term**</option>
                                         {% for membershipterm in membershipterms  %}
                                         <option 
@@ -208,9 +220,11 @@
                                     </select>
                                 </div>
                             </div>
+                            
                         </div><!--ROW END-->
                         <div class="row">
                             <div class="col-md-4">
+                                <label for="access_key">Access Key</label>
                                 <div class="input-group">
                                     <div class="input-group-prepend">
                                         <span class="input-group-text">
@@ -226,6 +240,8 @@
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
+                                    
+                                    <label for="salesperson">Sales Person</label>
                                     <select tabindex="17" class="form-control form-control-sm select2div" style="width:100%" name="salesperson">
                                         <option val-e="">**Select Sales Person**</option>
                                         {% for salesperson in salespersons %}
@@ -240,8 +256,10 @@
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <select tabindex="18" class="form-control form-control-sm select2div" style="width:100%" name="salesperson">
-                                        <option val-e="">**Select Personal Trainer**</option>
+                                    
+                                    <label for="personaltrainer">Personal Trainer</label>
+                                    <select tabindex="18" class="form-control form-control-sm select2div" style="width:100%" name="personaltrainer">
+                                        <option value="">**Select Personal Trainer**</option>
                                         {% for personaltrainer in personaltrainers %}
                                         <option {% if object.personaltrainer.id == personaltrainer.id %}
                                         selected
@@ -250,21 +268,14 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-md-4 mb-2">
-                                <div class="input-group">
-                                    <div class="custom-file">
-                                        <input type="file" name="contract" class='custom-file-input' accept="application/pdf" id="contract" placeholder="Contract" />
-                                        <label class="custom-file-label">Upload Contract</label>
-                                    </div>
-                                </div>
-                            </div>
+                            
                         </div>
                     </form>
                   </div>
                   <!-- /.tab-pane -->
 
                   <div class="tab-pane" id="settings">
-                    <form method="POST" id="form3">
+                    <form method="PUT" id="form3">
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
@@ -321,6 +332,9 @@
                 </div>
                 <!-- /.tab-content -->
               </div><!-- /.card-body -->
+              <div class="card-footer">
+                  <a class="btn bg-orange float-right" id="save"><span class="text-white">Save</span></a>
+              </div>
             </div>
             <!-- /.card -->
           </div>

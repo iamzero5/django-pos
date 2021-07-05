@@ -46,6 +46,7 @@ $(document).ready(function () {
             $('#reference_number').val(response.reference_number);
             $('#paid_amount').val(response.paid_amount);
             $('#total_amount').val(response.total_amount);
+            $('#payment_type').val(response.payment_type);
             $('#products tbody').empty();
             $.each(response.products,function(index,value){
               tr = $('<tr></tr>');

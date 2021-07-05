@@ -5,7 +5,6 @@ $(document).ready(function () {
   var bday = moment(new Date($('#birthdate').val())).format("YYYY-MM-DD");
   var membershipdate = moment(new Date($('#membership_start').val())).format("YYYY-MM-DD");
   var cardexpiry = moment(new Date($('#card_expiry').val())).format("YYYY-MM-DD");
-  console.log(cardexpiry);
   $('#birthdate').datetimepicker({
     format:'yyyy-MM-DD'
   })
@@ -27,17 +26,12 @@ $(document).ready(function () {
         $(this).prop('checked',false);
       }
   })
-  $('.u-stepper-btn').on('click',function(e){
-    var form = "form1";
-    if($(this).prop('id')=="1"){
-      form = $("#form1");
-    }else if($(this).prop('id')=="2"){
-      form = $("#form2");
-    }
-    if($(this).data('action')=="next" && form.valid()){
-      stepper.next()
-    }else if($(this).data('action')=="prev"){
-      stepper.previous()
+  $('#save').on('click',function(e){
+    e.preventDefault();
+    var form = $("#form1");
+    var form2 = $("#form2");
+    if(form.valid() && form2.valid()){
+      $('#form3').submit()
     }
   });
   $('[data-mask]').inputmask()
@@ -330,40 +324,44 @@ $(document).ready(function () {
       },
       data: serializedData,
       success: function(response,textStatus,xhr){
-          if(xhr.status == 201 && $method == "POST"){
-              var profile = $('#profile_pic')[0].files;
-              var contract = $('#contract')[0].files;
-              var fd = new FormData();
-              if(profile.length>0){
-                fd.append('profile_pic',profile[0]);
-              }
-              if(contract.length>0){
-                fd.append('contract',contract[0]);
-              }
-              fd.append('csrfmiddlewaretoken',$csrf);
-              $.ajax({
-                url:'upload/photo/' + response.id,
-                type: 'post',
-              data: fd,
-              contentType: false,
-              processData: false,
-              success: function(response){
-                $editBtn = '<button class="btn btn-warning" data-id="'+ response.id +'" data-url="'+response.url+'" data-toggle="modal" data-target="#modal" data-action="Edit"  title="Edit"><i class="fas fa-user-edit"></i></button>';
-                $deleteBtn = '<button type="button" class="btn btn-danger btnDelete" data-id="'+ response.id +'" data-url="'+response.url+'" data-action="Delete"  title="Delete"><i class="fas fa-user-minus"></i></button>';
-                $t.row.add([
-                    response.first_name + " " + response.last_name,
-                    response.membership_status_display,
-                    '<div class="btn-group float-right" id="action-'+ response.id +'">'+
-                    '</div>'
-                ]).draw(false).node().id = response.id;
-                $('#action-'+response.id).append($($editBtn));
-                $('#action-'+response.id).append($($deleteBtn));
-                $success = true;
-                $is_closed = true;
-                $('#modal').modal('hide');
-              },
+          if(xhr.status == 200 && $method == "PUT"){
+              // var profile = $('#profile_pic')[0].files;
+              // var contract = $('#contract')[0].files;
+              // var fd = new FormData();
+              // if(profile.length>0){
+              //   fd.append('profile_pic',profile[0]);
+              // }
+              // if(contract.length>0){
+              //   fd.append('contract',contract[0]);
+              // }
+              // fd.append('csrfmiddlewaretoken',$csrf);
+              // $.ajax({
+              //   url:'upload/photo/' + response.id,
+              //   type: 'post',
+              // data: fd,
+              // contentType: false,
+              // processData: false,
+              // success: function(response){
+              //   $editBtn = '<button class="btn btn-warning" data-id="'+ response.id +'" data-url="'+response.url+'" data-toggle="modal" data-target="#modal" data-action="Edit"  title="Edit"><i class="fas fa-user-edit"></i></button>';
+              //   $deleteBtn = '<button type="button" class="btn btn-danger btnDelete" data-id="'+ response.id +'" data-url="'+response.url+'" data-action="Delete"  title="Delete"><i class="fas fa-user-minus"></i></button>';
+              //   $t.row.add([
+              //       response.first_name + " " + response.last_name,
+              //       response.membership_status_display,
+              //       '<div class="btn-group float-right" id="action-'+ response.id +'">'+
+              //       '</div>'
+              //   ]).draw(false).node().id = response.id;
+              //   $('#action-'+response.id).append($($editBtn));
+              //   $('#action-'+response.id).append($($deleteBtn));
+              //   $success = true;
+              //   $is_closed = true;
+              //   $('#modal').modal('hide');
+              // },
 
-              });
+              // });
+              Swal.fire({
+                icon: 'success',
+                text: 'Member successfully updated!',
+              })
           }else if($method == "POST"){
             $success = false;
           }else if(xhr.status == 200 && $method == "PUT"){

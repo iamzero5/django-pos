@@ -9,10 +9,13 @@ class Product(CommonFields):
         ('I','Item'),
         ('S','Service')
         )
+
     name = models.CharField(max_length=100)
     product_type = models.CharField(max_length=2,choices=PRODUCTTYPES,default='I')
     price = models.DecimalField(max_digits=12,decimal_places=2)
     membership = models.ForeignKey(Membership,on_delete=models.SET_NULL,null=True)
+    sales = models.BooleanField(default=False)
+    purchase = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name

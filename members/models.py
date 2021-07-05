@@ -102,7 +102,8 @@ class Member(Person):
             ('N','None'),
             ('A','Active'),
             ('I','Inactive'),
-            ('C','Cancelled')
+            ('C','Cancelled'),
+            ('F','Freeze'),
         )
 
     GENDERS = (

@@ -20,6 +20,7 @@ class SalesOrderListView(PermissionRequiredMixin,LoginRequiredMixin,ListView):
         context = super().get_context_data(**kwargs)
         context['members'] = Member.objects.all()
         context['products'] = Product.objects.all()
+        context['payment_types'] = SalesOrder.PAYMENT_TYPES
         context['document_statuses'] = SalesOrder.DOCUMENT_STATUSES
         return context
 
