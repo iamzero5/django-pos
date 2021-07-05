@@ -25,7 +25,7 @@ class MemberListView(PermissionRequiredMixin,LoginRequiredMixin,ListView):
         context['gender_choices'] = Member.GENDERS
         context['card_types'] = Member.CARD_TYPES
         context['memberships'] = Membership.objects.all()
-        context['membershipterms'] = MembershipTerm.objects.filter(valid_from__gte=today,valid_to__lte=today).order_by('month')
+        context['membershipterms'] = MembershipTerm.objects.raw("SELECT * FROM members_membershipterm where (valid_from<='"+ str(today) +"' and valid_to>='"+ str(today) +"') or (valid_from is null and valid_to is null) order by month ASC")
         context['salespersons'] = SalesPerson.objects.filter(active=True)
         context['personaltrainers'] = PersonalTrainer.objects.filter(active=True)
         context['banks'] = Bank.objects.all()
