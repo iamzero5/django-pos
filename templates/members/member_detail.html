@@ -50,6 +50,8 @@
                     <b>Status</b> <a class="float-right 
                     {% if object.membership_status == 'I' %}
                         text-danger
+                    {% elif object.membership_status == 'C' %}
+                        text-warning
                     {% elif object.membership_status == 'F' %}
                         text-info
                     {% else %}
@@ -60,8 +62,8 @@
                   <li class="list-group-item">
                     <b>Contract:</b> 
                     <div class="float-right">
-                        <a href="/media/{{ object.contract }}" class="text-orange"> Download</a> | 
-                        <a data-target="modal" href="#" class="text-orange">View</a>
+                        <a data-target="modal" href="#" class="text-orange">View</a> | 
+                        <a href="/media/{{ object.contract }}" class="text-orange"> Download</a>
                     </div>
                   </li>
                 </ul>
@@ -180,7 +182,9 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="salesperson">Membership</label>
-                                    <select disabled name="membership" tabindex="13" id="membership" class="form-control form-control-sm">
+                                    <select {% if object.membership_status != 'C' %}
+                                    disabled
+                                {% endif %} name="membership" tabindex="13" id="membership" class="form-control form-control-sm">
                                         <option value="">**Select Membership**</option>
                                         {% for membership in memberships  %}
                                         <option 
@@ -196,7 +200,9 @@
                                 <div class="form-group">
                                     <label for="salesperson">Member Since</label>
                                     <div class="input-group date" id="divmembershipdate" data-target-input="nearest">
-                                        <input disabled type="text" data-target="#membership_start" data-toggle="datetimepicker" value="{{ object.membership_start }}" tabindex="14" name="membership_start" placeholder="Membership Date" id="membership_start" class="form-control form-control-sm datetimepicker-input" data-target="#divmembershipdate" />
+                                        <input {% if object.membership_status != 'C' %}
+                                        disabled
+                                    {% endif %} type="text" data-target="#membership_start" data-toggle="datetimepicker" value="{{ object.membership_start }}" tabindex="14" name="membership_start" placeholder="Membership Date" id="membership_start" class="form-control form-control-sm datetimepicker-input" data-target="#divmembershipdate" />
                                         <div class="input-group-append" data-target="#membership_start" data-toggle="datetimepicker">
                                             <div class="input-group-text">
                                                 <i class="fa fa-calendar"></i>
@@ -208,7 +214,9 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="salesperson">Term</label>
-                                    <select disabled name="membership_term" tabindex="15" id="membership_term" class="form-control form-control-sm">
+                                    <select {% if object.membership_status != 'C' %}
+                                    disabled
+                                {% endif %} name="membership_term" tabindex="15" id="membership_term" class="form-control form-control-sm">
                                         <option value="">**Select Membership Term**</option>
                                         {% for membershipterm in membershipterms  %}
                                         <option 
@@ -268,9 +276,21 @@
                                     </select>
                                 </div>
                             </div>
-                            
                         </div>
                     </form>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <button type="button" 
+                                {% if object.membership_status == 'F' or object.membership_status == 'C' %}
+                                    disabled
+                                {% endif %}
+                                     id="freeze" data-url="{% url 'member-freeze' object.id %}" class="btn btn-info">Freeze</button>
+                                <button type="button" 
+                                {% if object.membership_status == 'C' %}
+                                    disabled
+                                {% endif %} id="cancel" data-url="{% url 'member-cancel' object.id %}" class="btn btn-danger">Cancel</button>
+                            </div>
+                        </div>
                   </div>
                   <!-- /.tab-pane -->
 

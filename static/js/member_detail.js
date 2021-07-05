@@ -17,6 +17,42 @@ $(document).ready(function () {
   $('#birthdate').val(bday).trigger('change');
   $('#membership_start').val(membershipdate).trigger('change');
   $('#card_expiry').val(cardexpiry).trigger('change');
+  
+  $('#freeze').on('click',function(){
+    Swal.fire({
+      title: 'Do you want to freeze this membership?',
+      showDenyButton: true,
+      showCancelButton: false,
+      confirmButtonText: 'Yes',
+      denyButtonText: 'No',
+      showLoaderOnConfirm: true,
+      preConfirm: () => {
+        $method = "PUT";
+        $url = $(this).data('url');
+        $csrf = $('input[name="csrfmiddlewaretoken"]:first').val();
+        sendActionRequest($url,$method,$csrf);
+      },
+      allowOutsideClick: () => !Swal.isLoading()
+    });
+  });
+
+  $('#cancel').on('click',function(){
+    Swal.fire({
+      title: 'Do you want to cancel this membership?',
+      showDenyButton: true,
+      showCancelButton: false,
+      confirmButtonText: 'Yes',
+      denyButtonText: 'No',
+      showLoaderOnConfirm: true,
+      preConfirm: () => {
+        $method = "PUT";
+        $url = $(this).data('url');
+        $csrf = $('input[name="csrfmiddlewaretoken"]:first').val();
+        sendActionRequest($url,$method,$csrf);
+      },
+      allowOutsideClick: () => !Swal.isLoading()
+    });
+  });
 
   $('.select2div').select2({
     width:'resolve'
@@ -314,6 +350,33 @@ $(document).ready(function () {
         return false;
         }
     });
+
+  function sendActionRequest($url,$method,$csrf){
+    $.ajax({
+      type:$method,
+      url: $url,
+      headers:{
+        'X-CSRFToken':$csrf
+      },
+      success: function(response,textStatus,xhr){
+          if(xhr.status == 200 && $method == "PUT"){
+              Swal.fire({
+                icon: 'success',
+                text: "Success",
+              }).then((result)=>{
+                location.reload();
+              })
+          }else if($method == "POST"){
+            $success = false;
+          }else if(xhr.status == 200 && $method == "PUT"){
+            $success = true;
+          }
+      },
+      error: function(response){
+          console.log(response);
+      }
+  });
+  }
 
   function sendRequest(serializedData,$url,$method,$csrf){
     $.ajax({

@@ -57,6 +57,25 @@ def member_photo_upload(request, member_id):
         serializer = MemberSerializers(member)
         return Response(serializer.data,status=status.HTTP_200_OK)
 
+@login_required
+@api_view(['PUT'])
+def member_freeze(request,member_id):
+    if request.method=="PUT":
+        member = get_object_or_404(Member,id=member_id)
+        member.membership_status = "F"
+        member.save()
+        serializer = MemberSerializers(member)
+        return Response(serializer.data,status=status.HTTP_200_OK)
+
+@login_required
+@api_view(['PUT'])
+def member_cancel(request,member_id):
+    if request.method=="PUT":
+        member = get_object_or_404(Member,id=member_id)
+        member.membership_status = "C"
+        member.save()
+        serializer = MemberSerializers(member)
+        return Response(serializer.data,status=status.HTTP_200_OK)
 class MemberList(APIView):
     #permission_classes = [permissions.IsAuthenticated]
 
